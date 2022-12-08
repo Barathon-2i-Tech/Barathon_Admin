@@ -1,13 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import './index.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AuthProvider } from './hooks/useAuth';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+import App from './App';
+
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+const theme = createTheme({
+    palette: {
+        primary: { main: '#3a34d2' },
+    },
+});
+
+root.render(
+    <StrictMode>
         <BrowserRouter>
-            <App />
+            <AuthProvider>
+                <ThemeProvider theme={theme}>
+                    <App />
+                </ThemeProvider>
+            </AuthProvider>
         </BrowserRouter>
-    </React.StrictMode>,
+    </StrictMode>,
 );

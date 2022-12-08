@@ -1,17 +1,24 @@
 import { Routes, Route } from 'react-router-dom';
-import Login from '../src/components/auth/Login';
+import { LoginPage } from './pages/authentification/LoginPage';
+import { HomePage } from './pages/home/HomePage';
+import { ProfilePage } from './pages/admin/ProfilePage';
+import { SettingsPage } from './pages/admin/SettingsPage';
+import { ProtectedLayout } from './components/ProtectedLayout';
+import { HomeLayout } from './components/HomeLayout';
 import './App.css';
-import Dashboard from './pages/dashboard/Dashboard';
 
-function App() {
+export default function App() {
     return (
-        <div className="App">
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-            </Routes>
-        </div>
+        <Routes>
+            <Route element={<HomeLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+            </Route>
+
+            <Route path="/dashboard" element={<ProtectedLayout />}>
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="settings" element={<SettingsPage />} />
+            </Route>
+        </Routes>
     );
 }
-
-export default App;
