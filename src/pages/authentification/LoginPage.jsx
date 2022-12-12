@@ -41,15 +41,17 @@ export const LoginPage = () => {
         console.log(values);
         Axios.api
             .post('/login', {
+                
+                    email: values.email,
+                    password: values.password,
+                },
+                {
                 headers: {
-                    accept: 'application/vnd.api+json',
+                    'accept': 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
                 },
-                body: {
-                    email: 'admin@mail.fr',
-                    password: 'azertyuiop',
-                },
-            })
+            },
+            )
             .then((response) => {
                 console.log(response);
                 if (response.data.data.user.administrator_id != null) {
