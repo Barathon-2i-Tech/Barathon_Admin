@@ -1,6 +1,6 @@
 import { BasicPage } from '../../components/BasicPage';
 import Settings from '@mui/icons-material/Settings';
 
-export const SettingsPage = () => {
-    return <BasicPage title="Settings Page" icon={<Settings />} />;
+export const MessagingPage = () => {
+    return <BasicPage title="Messaging Page" icon={<Settings />} />;
 };

@@ -7,17 +7,12 @@ export const HomeLayout = () => {
     const outlet = useOutlet();
 
     if (user) {
-        return <Navigate to="/dashboard/profile" replace />;
+        return <Navigate to="/admin/dashboard" replace />;
     }
 
     return (
         <div>
-            <AppBar
-                pages={[
-                    { label: 'Home', path: '/' },
-                    { label: 'Login', path: '/login' },
-                ]}
-            />
+            <AppBar/>
             {outlet}
         </div>
     );

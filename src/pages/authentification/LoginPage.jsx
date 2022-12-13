@@ -26,19 +26,8 @@ const loginSchema = yup.object({
 export const LoginPage = () => {
     const { login } = useAuth();
 
-    // from the example
-    /* const handleSubmit = (event) => {
-        //event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({ data });
-        login({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    }; */
 
     const handleFormSubmit = async (values) => {
-        console.log(values);
         Axios.api
             .post('/login', {
                 
@@ -53,9 +42,7 @@ export const LoginPage = () => {
             },
             )
             .then((response) => {
-                console.log(response);
                 if (response.data.data.user.administrator_id != null) {
-                    console.log(response.data.data);
                     login(response.data.data);
                 } else {
                     alert("Vous n'etes pas autorisé à accéder à l'administration");

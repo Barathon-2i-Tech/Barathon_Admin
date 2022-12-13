@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (data) => {
         setUser(data);
-        navigate('/dashboard/profile', { replace: true });
+        navigate('/admin/dashboard', { replace: true });
     };
 
     const logout = () => {
