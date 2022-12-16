@@ -26,20 +26,20 @@ const loginSchema = yup.object({
 export const LoginPage = () => {
     const { login } = useAuth();
 
-
     const handleFormSubmit = async (values) => {
         Axios.api
-            .post('/login', {
-                
+            .post(
+                '/login',
+                {
                     email: values.email,
                     password: values.password,
                 },
                 {
-                headers: {
-                    'accept': 'application/vnd.api+json',
-                    'Content-Type': 'application/vnd.api+json',
+                    headers: {
+                        accept: 'application/vnd.api+json',
+                        'Content-Type': 'application/vnd.api+json',
+                    },
                 },
-            },
             )
             .then((response) => {
                 if (response.data.data.user.administrator_id != null) {
@@ -118,15 +118,6 @@ export const LoginPage = () => {
                         </form>
                     )}
                 </Formik>
-                {/* <Grid container>
-            <Grid item>
-              <RouterLink to="/register">
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </RouterLink>
-            </Grid>
-          </Grid> */}
             </Box>
         </Container>
     );

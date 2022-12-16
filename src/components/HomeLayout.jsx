@@ -12,7 +12,7 @@ export const HomeLayout = () => {
 
     return (
         <div>
-            <AppBar/>
+            <AppBar />
             {outlet}
         </div>
     );
