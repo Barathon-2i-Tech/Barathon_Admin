@@ -26,5 +26,6 @@ export const useLocalStorage = (keyName, defaultValue) => {
         setStoredValue(newValue);
     };
 
+
     return [storedValue, setValue];
 };

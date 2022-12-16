@@ -9,6 +9,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useAuth } from '../../hooks/useAuth';
 import Axios from '../../utils/axiosUrl';
+import toast, {Toaster} from 'react-hot-toast';
 
 const initialValues = {
     email: '',
@@ -23,8 +24,11 @@ const loginSchema = yup.object({
     password: yup.string('Entrer votre mot de passe').required('Le mot de passe est requis'),
 });
 
+
 export const LoginPage = () => {
     const { login } = useAuth();
+    
+    const BadAccount = () => toast.error("Votre compte n'est pas autoriser à acceder a l'administration")
 
     const handleFormSubmit = async (values) => {
         Axios.api
@@ -44,8 +48,8 @@ export const LoginPage = () => {
             .then((response) => {
                 if (response.data.data.user.administrator_id != null) {
                     login(response.data.data);
-                } else {
-                    alert("Vous n'etes pas autorisé à accéder à l'administration");
+                } else { 
+                    BadAccount();
                 }
             })
             .catch((e) => {
@@ -56,6 +60,7 @@ export const LoginPage = () => {
 
     return (
         <Container component="main" maxWidth="xs">
+            <Toaster/>
             <Box
                 sx={{
                     marginTop: 8,
