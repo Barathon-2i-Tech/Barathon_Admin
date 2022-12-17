@@ -1,20 +1,29 @@
-import Avatar from '@mui/material/Avatar';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import Axios from '../../utils/axiosUrl';
-import toast, {Toaster} from 'react-hot-toast';
+import { ReactComponent as BarathonLogo } from '../../assets/barathon_logo.svg';
 
-const initialValues = {
-    email: '',
-    password: '',
-};
+function Copyright(props) {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://github.com/Barathon-2i-Tech/Barathon_Admin">
+                Barathon
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
 
 const loginSchema = yup.object({
     email: yup
@@ -23,12 +32,8 @@ const loginSchema = yup.object({
         .required("L'email est requis"),
     password: yup.string('Entrer votre mot de passe').required('Le mot de passe est requis'),
 });
-
-
 export const LoginPage = () => {
     const { login } = useAuth();
-    
-    const BadAccount = () => toast.error("Votre compte n'est pas autoriser à acceder a l'administration")
 
     const handleFormSubmit = async (values) => {
         Axios.api
@@ -48,19 +53,50 @@ export const LoginPage = () => {
             .then((response) => {
                 if (response.data.data.user.administrator_id != null) {
                     login(response.data.data);
-                } else { 
-                    BadAccount();
+                } else {
+                    BadCredential();
                 }
             })
             .catch((e) => {
                 console.error(e);
-                alert('Une erreur est survenue. Merci de réessayer');
+                LoginError();
             });
+    };
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+        },
+        validationSchema: loginSchema,
+        onSubmit: handleFormSubmit,
+    });
+
+    const BadCredential = () => {
+        toast.error("Vous n'êtes pas autorisé à accéder à l'administration ", {
+            position: 'top-center',
+            style: {
+                border: '2px solid #d32f2f',
+                padding: '16px',
+            },
+            duration: 6000,
+        });
+    };
+
+    const LoginError = () => {
+        toast.error("Une Erreur s'est produite, veuillez réessayer plus tard", {
+            position: 'top-center',
+            style: {
+                border: '2px solid #d32f2f',
+                padding: '16px',
+            },
+            duration: 6000,
+        });
     };
 
     return (
         <Container component="main" maxWidth="xs">
-            <Toaster/>
+            <Toaster />
+            <CssBaseline />
             <Box
                 sx={{
                     marginTop: 8,
@@ -69,61 +105,43 @@ export const LoginPage = () => {
                     alignItems: 'center',
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-                    <LockOutlinedIcon />
-                </Avatar>
+                <BarathonLogo style={{ maxWidth: '200px' }} />
                 <Typography component="h1" variant="h5">
-                    Log In
+                    Connexion
                 </Typography>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={handleFormSubmit}
-                    validationSchema={loginSchema}
-                >
-                    {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
-                        <form onSubmit={handleSubmit}>
-                            <Box
-                                display="grid"
-                                gap="30px"
-                                gridTemplateColumns="repeat(2, minmax(0,1 fr))"
-                            >
-                                <TextField
-                                    fullWidth
-                                    variant="filled"
-                                    type="email"
-                                    label="Email"
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    value={values.email}
-                                    name="email"
-                                    //convert to boolean using !! operator
-                                    error={!!touched.email && !!errors.email}
-                                    helperText={touched.email && errors.email}
-                                />
 
-                                <TextField
-                                    fullWidth
-                                    variant="filled"
-                                    type="password"
-                                    label="Mot de passe"
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    value={values.password}
-                                    name="password"
-                                    //convert to boolean using !! operator
-                                    error={!!touched.password && !!errors.password}
-                                    helperText={touched.password && errors.password}
-                                />
-                            </Box>
-                            <Box display="flex" justifyContent="center" mt="20px">
-                                <Button type="submit" variant="contained" color="secondary">
-                                    Se connecter
-                                </Button>
-                            </Box>
-                        </form>
-                    )}
-                </Formik>
+                <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
+                    <TextField
+                        fullWidth
+                        type="email"
+                        label="Email"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                        name="email"
+                        //convert to boolean using !! operator
+                        error={!!formik.touched.email && !!formik.errors.email}
+                        helperText={formik.touched.email && formik.errors.email}
+                    />
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        type="password"
+                        label="Mot de passe"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                        name="password"
+                        error={!!formik.touched.password && !!formik.errors.password}
+                        helperText={formik.touched.password && formik.errors.password}
+                        autoComplete="current-password"
+                    />
+                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                        Connexion
+                    </Button>
+                </Box>
             </Box>
+            <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
     );
 };
