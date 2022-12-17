@@ -3,7 +3,6 @@ import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -11,19 +10,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import Axios from '../../utils/axiosUrl';
 import { ReactComponent as BarathonLogo } from '../../assets/barathon_logo.svg';
-
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://github.com/Barathon-2i-Tech/Barathon_Admin">
-                Barathon
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import Copyright from '../../components/Copyright';
 
 const loginSchema = yup.object({
     email: yup
