@@ -1,12 +1,25 @@
 import { createContext, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { useLocalStorage } from './useLocalStorage';
 import Axios from '../utils/axiosUrl';
 
 const AuthContext = createContext();
 
+const LogoutError = () => {
+    toast.error("Une Erreur s'est produite, veuillez réessayer plus tard", {
+        position: 'top-center',
+        style: {
+            border: '2px solid #d32f2f',
+            padding: '16px',
+        },
+        duration: 6000,
+    });
+};
+
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
+    <Toaster />
     const [user, setUser] = useLocalStorage('user', null);
     const navigate = useNavigate();
 
@@ -35,7 +48,7 @@ export const AuthProvider = ({ children }) => {
             })
             .catch((error) => {
                 console.error(error);
-                alert('Une erreur est survenue a la deconnexion. Merci de réessayer');
+                LogoutError();
             });
     };
 
