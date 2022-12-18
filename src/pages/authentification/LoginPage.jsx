@@ -38,7 +38,7 @@ export const LoginPage = () => {
                 },
             )
             .then((response) => {
-                if (response.data.data.user.administrator_id != null) {
+                if (response.data.data.userLogged.administrator_id != null) {
                     login(response.data.data);
                 } else {
                     BadCredential();

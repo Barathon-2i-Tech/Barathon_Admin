@@ -9,6 +9,7 @@ import { UsersPage } from './pages/admin/UsersPage';
 import { EstablishmentsPage } from './pages/admin/EstablishmentsPage';
 import { EventsPage } from './pages/admin/EventsPage';
 import { TagsPage } from './pages/admin/TagsPage';
+import { MessagingPage } from './pages/admin/MessagingPage';
 
 export default function App() {
     return (
@@ -23,6 +24,7 @@ export default function App() {
                 <Route path="etablissements" element={<EstablishmentsPage />} />
                 <Route path="evenements" element={<EventsPage />} />
                 <Route path="tags" element={<TagsPage />} />
+                <Route path="messagerie" element={<MessagingPage />} />
                 <Route path="profile" element={<ProfilePage />} />
             </Route>
         </Routes>

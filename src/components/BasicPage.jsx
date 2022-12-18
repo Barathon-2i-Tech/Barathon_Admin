@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 export const BasicPage = ({ title, icon }) => {
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main">
             <Box
                 sx={{
                     marginTop: 8,
