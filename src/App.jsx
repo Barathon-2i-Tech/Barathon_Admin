@@ -10,6 +10,7 @@ import { EstablishmentsPage } from './pages/admin/EstablishmentsPage';
 import { EventsPage } from './pages/admin/EventsPage';
 import { TagsPage } from './pages/admin/TagsPage';
 import { MessagingPage } from './pages/admin/MessagingPage';
+import NotFoundPage from './components/NotFoundPage';
 
 export default function App() {
     return (
@@ -27,6 +28,8 @@ export default function App() {
                 <Route path="messagerie" element={<MessagingPage />} />
                 <Route path="profile" element={<ProfilePage />} />
             </Route>
+
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
     );
 }
