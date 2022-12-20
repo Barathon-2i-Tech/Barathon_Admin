@@ -12,7 +12,7 @@
         "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
         "pre-commit": "npm run format && lint-staged && pretty-quick --staged",
         "test": "vitest",
-        "test:watch": "vitest watch",
+        "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage"
     },
     "dependencies": {
@@ -46,6 +46,7 @@
         "@types/react-dom": "^18.0.8",
         "@vitejs/plugin-react": "^2.2.0",
         "@vitest/coverage-c8": "^0.26.0",
+        "@vitest/ui": "^0.26.0",
         "eslint": "^8.28.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-react": "^7.31.11",
