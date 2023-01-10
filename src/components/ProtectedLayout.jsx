@@ -74,7 +74,7 @@ export const ProtectedLayout = () => {
 
     React.useEffect(() => {
         setLoggedUser(user.userLogged.first_name + ' ' + user.userLogged.last_name);
-        setuserAvatar(user.adminAvatar[0].avatar);
+        setuserAvatar(user.userLogged.avatar);
     }, []);
 
     if (!user) {
