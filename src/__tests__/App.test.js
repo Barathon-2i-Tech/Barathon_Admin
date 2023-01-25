@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 
-
 describe('Test the environement with something truthy and falsy', () => {
     it('true to be true', () => {
         expect(true).toBe(true);
@@ -10,4 +9,3 @@ describe('Test the environement with something truthy and falsy', () => {
         expect(false).toBe(false);
     });
 });
-
