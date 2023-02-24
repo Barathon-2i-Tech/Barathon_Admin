@@ -19,7 +19,6 @@ const LogoutError = () => {
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
-    <Toaster />;
     const [user, setUser] = useSessionStorage('user', null);
     const navigate = useNavigate();
 
@@ -61,7 +60,12 @@ export const AuthProvider = ({ children }) => {
         [user],
     );
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <>
+            <Toaster />
+            <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        </>
+    );
 };
 
 export const useAuth = () => {
