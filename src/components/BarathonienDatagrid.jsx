@@ -1,25 +1,23 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Axios from '../utils/axiosUrl';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import { Box, useTheme } from '@mui/material';
-import { tokens } from './theme';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import Axios from '../utils/axiosUrl';
+import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import DeleteIcon from '@mui/icons-material/Delete';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import { green, red } from '@mui/material/colors';
 
 function BarathonienDatagrid() {
     const { user } = useAuth();
     const [barathoniens, setBarathoniens] = useState([]);
     const ApiToken = user.token;
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
     const [open, setOpen] = useState(false);
     const [selectedBarathonienId, setSelectedBarathonienId] = useState(null);
 
@@ -124,9 +122,7 @@ function BarathonienDatagrid() {
                         p="5px"
                         display="flex"
                         justifyContent="center"
-                        backgroundColor={
-                            deleted_at === null ? colors.greenAccent[600] : colors.redAccent[600]
-                        }
+                        backgroundColor={deleted_at === null ? green[400] : red[400]}
                         borderRadius="5px"
                     >
                         {deleted_at === null && <HowToRegIcon />}
