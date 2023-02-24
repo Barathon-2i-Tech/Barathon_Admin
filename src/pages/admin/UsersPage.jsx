@@ -1,6 +1,7 @@
-import GroupIcon from '@mui/icons-material/Group';
+//import GroupIcon from '@mui/icons-material/Group';
 import Paper from '@mui/material/Paper';
-import { BasicPage } from '../../components/BasicPage';
+//import { BasicPage } from '../../components/BasicPage';
+import BarathonienDatagrid from '../../components/BarathonienDatagrid';
 
 export const UsersPage = () => {
     return (
@@ -12,7 +13,8 @@ export const UsersPage = () => {
                 width: '100%',
             }}
         >
-            <BasicPage title="Users Page" icon={<GroupIcon />} />
+            {/*  <BasicPage title="Users Page" icon={<GroupIcon />} /> */}
+            <BarathonienDatagrid />
         </Paper>
     );
 };
