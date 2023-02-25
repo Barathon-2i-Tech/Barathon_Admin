@@ -2,23 +2,27 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Axios from '../utils/axiosUrl';
-import { Box } from '@mui/material';
-import Button from '@mui/material/Button';
+import { Box, Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import EditIcon from '@mui/icons-material/Edit';
 import { green, red } from '@mui/material/colors';
+import BarathonienForm from './BarathonienForm';
 
 function BarathonienDatagrid() {
     const { user } = useAuth();
-    const [barathoniens, setBarathoniens] = useState([]);
     const ApiToken = user.token;
+
+    const [allBarathoniens, setAllBarathoniens] = useState([]);
     const [open, setOpen] = useState(false);
+    const [openForm, setOpenForm] = useState(false);
     const [selectedBarathonienId, setSelectedBarathonienId] = useState(null);
 
     async function getBarathoniens() {
@@ -30,8 +34,7 @@ function BarathonienDatagrid() {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            console.log(response.data.data);
-            setBarathoniens(response.data.data);
+            setAllBarathoniens(response.data.data);
             await new Promise((resolve) => setTimeout(resolve));
         } catch (error) {
             console.log(error);
@@ -39,7 +42,6 @@ function BarathonienDatagrid() {
     }
 
     async function handleDelete(id) {
-        console.log('delete' + id);
         try {
             await Axios.api.delete(`/barathonien/delete/${id}`, {
                 headers: {
@@ -56,7 +58,6 @@ function BarathonienDatagrid() {
     }
 
     async function handleRestore(id) {
-        console.log('restore' + id);
         try {
             await Axios.api.get(`/barathonien/restore/${id}`, {
                 headers: {
@@ -73,20 +74,26 @@ function BarathonienDatagrid() {
     }
 
     const handleClickOpen = (id) => {
-        console.log("id de l'open " + id);
         setSelectedBarathonienId(id);
         setOpen(true);
     };
 
+    const handleClickOpenForm = (id) => {
+        setSelectedBarathonienId(id);
+        setOpenForm(true);
+        console.log("id de l'open form " + id);
+    };
+
     const handleClose = () => {
         setOpen(false);
+        setOpenForm(false);
     };
 
     useEffect(() => {
         getBarathoniens();
-    }, [open]);
+    }, [open, openForm]);
 
-    const rows = barathoniens.map((barathonien) => ({
+    const rows = allBarathoniens.map((barathonien) => ({
         key: barathonien.user_id,
         id: barathonien.user_id,
         first_name: barathonien.first_name,
@@ -108,12 +115,12 @@ function BarathonienDatagrid() {
         { field: 'fullname', headerName: 'Nom complet', flex: 0.7, valueGetter: getFullName },
         { field: 'birthday', headerName: 'Date de naissance', flex: 0.5 },
         { field: 'address', headerName: 'Adresse', flex: 0.7 },
-        { field: 'postal_code', headerName: 'Code postal', flex: 0.7 },
-        { field: 'city', headerName: 'Ville', flex: 0.7 },
+        { field: 'postal_code', headerName: 'Code postal', flex: 0.4 },
+        { field: 'city', headerName: 'Ville', flex: 0.5 },
         {
             field: 'deleted_at',
             headerName: 'Actif',
-            flex: 0.7,
+            flex: 0.5,
             renderCell: ({ row: { deleted_at } }) => {
                 return (
                     <Box
@@ -137,19 +144,38 @@ function BarathonienDatagrid() {
             flex: 0.7,
             disableClickEventBubbling: true,
             renderCell: (params) => (
-                <Button
-                    variant="contained"
-                    color={params.row.deleted_at === null ? 'error' : 'warning'}
-                    size="small"
-                    onClick={() => {
-                        handleClickOpen(params.row.id);
-                    }}
-                    startIcon={
-                        params.row.deleted_at === null ? <DeleteIcon /> : <RestoreFromTrashIcon />
-                    }
-                >
-                    {params.row.deleted_at === null ? 'Supprimer' : 'Restaurer'}
-                </Button>
+                <>
+                    <Button
+                        sx={{ marginRight: '10px', px: '20px' }}
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => {
+                            handleClickOpenForm(params.row.id);
+                        }}
+                        startIcon={<EditIcon />}
+                    >
+                        Modifier
+                    </Button>
+                    <Button
+                        sx={{ px: '20px' }}
+                        variant="contained"
+                        color={params.row.deleted_at === null ? 'error' : 'warning'}
+                        size="small"
+                        onClick={() => {
+                            handleClickOpen(params.row.id);
+                        }}
+                        startIcon={
+                            params.row.deleted_at === null ? (
+                                <DeleteIcon />
+                            ) : (
+                                <RestoreFromTrashIcon />
+                            )
+                        }
+                    >
+                        {params.row.deleted_at === null ? 'Supprimer' : 'Restaurer'}
+                    </Button>
+                </>
             ),
         },
     ];
@@ -167,11 +193,12 @@ function BarathonienDatagrid() {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
+                    <DialogTitle id="alert-dialog-title">{'Confirmation'}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             {`Êtes-vous sûr de vouloir ${
                                 selectedBarathonienId !== null &&
-                                barathoniens.find(
+                                allBarathoniens.find(
                                     (barathonien) => barathonien.user_id === selectedBarathonienId,
                                 )?.deleted_at === null
                                     ? 'supprimer'
@@ -182,7 +209,7 @@ function BarathonienDatagrid() {
                     <DialogActions>
                         <Button onClick={handleClose}>Annuler</Button>
                         {selectedBarathonienId !== null &&
-                        barathoniens.find((b) => b.user_id === selectedBarathonienId)
+                        allBarathoniens.find((b) => b.user_id === selectedBarathonienId)
                             ?.deleted_at === null ? (
                             <Button onClick={() => handleDelete(selectedBarathonienId)}>
                                 Supprimer
@@ -194,6 +221,11 @@ function BarathonienDatagrid() {
                         )}
                     </DialogActions>
                 </Dialog>
+                <BarathonienForm
+                    open={openForm}
+                    handleClose={handleClose}
+                    barathonienId={selectedBarathonienId}
+                />
             </div>
         </>
     );
