@@ -35,7 +35,6 @@ function BarathonienDatagrid() {
                 },
             });
             setAllBarathoniens(response.data.data);
-            await new Promise((resolve) => setTimeout(resolve));
         } catch (error) {
             console.log(error);
         }
@@ -50,7 +49,6 @@ function BarathonienDatagrid() {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            await new Promise((resolve) => setTimeout(resolve));
             setOpen(false);
         } catch (error) {
             console.log(error);
@@ -66,7 +64,6 @@ function BarathonienDatagrid() {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            await new Promise((resolve) => setTimeout(resolve));
             setOpen(false);
         } catch (error) {
             console.log(error);
@@ -81,7 +78,6 @@ function BarathonienDatagrid() {
     const handleClickOpenForm = (id) => {
         setSelectedBarathonienId(id);
         setOpenForm(true);
-        console.log("id de l'open form " + id);
     };
 
     const handleClose = () => {
@@ -116,11 +112,11 @@ function BarathonienDatagrid() {
         { field: 'birthday', headerName: 'Date de naissance', flex: 0.5 },
         { field: 'address', headerName: 'Adresse', flex: 0.7 },
         { field: 'postal_code', headerName: 'Code postal', flex: 0.4 },
-        { field: 'city', headerName: 'Ville', flex: 0.5 },
+        { field: 'city', headerName: 'Ville', flex: 0.4 },
         {
             field: 'deleted_at',
             headerName: 'Actif',
-            flex: 0.5,
+            flex: 0.3,
             renderCell: ({ row: { deleted_at } }) => {
                 return (
                     <Box
@@ -209,8 +205,9 @@ function BarathonienDatagrid() {
                     <DialogActions>
                         <Button onClick={handleClose}>Annuler</Button>
                         {selectedBarathonienId !== null &&
-                        allBarathoniens.find((b) => b.user_id === selectedBarathonienId)
-                            ?.deleted_at === null ? (
+                        allBarathoniens.find(
+                            (barathonien) => barathonien.user_id === selectedBarathonienId,
+                        )?.deleted_at === null ? (
                             <Button onClick={() => handleDelete(selectedBarathonienId)}>
                                 Supprimer
                             </Button>

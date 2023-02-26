@@ -59,7 +59,9 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
         }
     }
     useEffect(() => {
-        getBarathonienById(barathonienId);
+        if (open) {
+            getBarathonienById(barathonienId);
+        }
     }, [open]);
 
     return (
