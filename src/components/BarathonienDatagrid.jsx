@@ -150,6 +150,7 @@ function BarathonienDatagrid() {
                             handleClickOpenForm(params.row.id);
                         }}
                         startIcon={<EditIcon />}
+                        disabled={params.row.deleted_at !== null}
                     >
                         Modifier
                     </Button>
@@ -221,7 +222,7 @@ function BarathonienDatagrid() {
                 <BarathonienForm
                     open={openForm}
                     handleClose={handleClose}
-                    barathonienId={selectedBarathonienId}
+                    userId={selectedBarathonienId}
                 />
             </div>
         </>

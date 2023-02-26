@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-function BarathonienForm({ barathonienId, open, handleClose }) {
+function BarathonienForm({ userId, open, handleClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
@@ -39,13 +39,24 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
     });
 
     async function handleModify(values) {
-        console.log('modification du barathonien ID n° ' + values.id);
+        console.log('modification du barathonien ID n° ' + values.user_id);
+        try {
+            await Axios.api.post(`/barathonien/update/${userId}`, values, {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
         handleClose();
     }
 
-    async function getBarathonienById(barathonienId) {
+    async function getBarathonienById(userId) {
         try {
-            const response = await Axios.api.get(`/barathonien/${barathonienId}`, {
+            const response = await Axios.api.get(`/barathonien/${userId}`, {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
@@ -60,7 +71,7 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
     }
     useEffect(() => {
         if (open) {
-            getBarathonienById(barathonienId);
+            getBarathonienById(userId);
         }
     }, [open]);
 
@@ -152,7 +163,7 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
 }
 
 BarathonienForm.propTypes = {
-    barathonienId: PropTypes.number,
+    userId: PropTypes.number,
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
 };
