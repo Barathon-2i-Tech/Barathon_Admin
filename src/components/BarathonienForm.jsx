@@ -11,6 +11,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import InfinityLoader from './InfinityLoader';
 
 function BarathonienForm({ userId, open, handleClose }) {
     const { user } = useAuth();
@@ -106,7 +107,9 @@ function BarathonienForm({ userId, open, handleClose }) {
             <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{"Modification de l'utilisateur"}</DialogTitle>
                 {loading ? (
-                    <DialogContent>{'chargement en cours'}</DialogContent>
+                    <DialogContent>
+                        <InfinityLoader />
+                    </DialogContent>
                 ) : (
                     <DialogContent>
                         <form onSubmit={formik.handleSubmit}>
