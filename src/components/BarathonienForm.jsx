@@ -26,17 +26,22 @@ function BarathonienForm({ userId, open, handleClose }) {
             icon: '👏',
         });
     };
+
     const errorToast = () => {
         toast.error('Nous avons rencontré un problème');
+    };
+
+    const errorUniqueEmailToast = () => {
+        toast.error("L'adresse email saisie existe déja.");
     };
 
     const validationSchema = Yup.object({
         first_name: Yup.string().required('Requis'),
         last_name: Yup.string().required('Requis'),
         email: Yup.string().email('Email invalide').required('Requis'),
-        address: Yup.string().required('Required').min(5, "L'adresse est invalide"),
-        postal_code: Yup.string().required('Required').min(5, 'Le code postal est invalide'),
-        city: Yup.string().required('Required'),
+        address: Yup.string().required('Requis').min(5, "L'adresse est invalide"),
+        postal_code: Yup.string().required('Requis').min(5, 'Le code postal est invalide'),
+        city: Yup.string().required('Requis'),
     });
 
     const formik = useFormik({
@@ -63,11 +68,15 @@ function BarathonienForm({ userId, open, handleClose }) {
                 },
             });
             successToast();
+            handleClose();
         } catch (error) {
-            errorToast();
-            console.log(error);
+            if (error.response.data.message === 'validation.unique') {
+                errorUniqueEmailToast();
+            } else {
+                errorToast();
+                console.log(error);
+            }
         }
-        handleClose();
     }
 
     async function getBarathonienById(userId) {
