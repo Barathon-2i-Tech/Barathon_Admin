@@ -3,17 +3,32 @@ import { useAuth } from '../hooks/useAuth';
 import PropTypes from 'prop-types';
 import Axios from '../utils/axiosUrl';
 import { Button, TextField } from '@mui/material';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Grid from '@mui/material/Grid';
+import toast, { Toaster } from 'react-hot-toast';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 
 function BarathonienForm({ userId, open, handleClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
+
+    const successToast = () => {
+        toast.success('Mise à jour réussie', {
+            position: 'top-center',
+            style: {
+                padding: '16px',
+            },
+            icon: '👏',
+        });
+    };
+    const errorToast = () => {
+        toast.error('Nous avons rencontré un problème');
+    };
 
     const validationSchema = Yup.object({
         first_name: Yup.string().required('Requis'),
@@ -39,7 +54,6 @@ function BarathonienForm({ userId, open, handleClose }) {
     });
 
     async function handleModify(values) {
-        console.log('modification du barathonien ID n° ' + values.user_id);
         try {
             await Axios.api.post(`/barathonien/update/${userId}`, values, {
                 headers: {
@@ -48,7 +62,9 @@ function BarathonienForm({ userId, open, handleClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
+            successToast();
         } catch (error) {
+            errorToast();
             console.log(error);
         }
         handleClose();
@@ -77,6 +93,7 @@ function BarathonienForm({ userId, open, handleClose }) {
 
     return (
         <>
+            <Toaster />
             <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{"Modification de l'utilisateur"}</DialogTitle>
                 {loading ? (
@@ -84,77 +101,117 @@ function BarathonienForm({ userId, open, handleClose }) {
                 ) : (
                     <DialogContent>
                         <form onSubmit={formik.handleSubmit}>
-                            <TextField
-                                fullWidth
-                                id="first_name"
-                                name="first_name"
-                                label="Prénom"
-                                value={formik.values.first_name}
-                                onChange={formik.handleChange}
-                                error={
-                                    formik.touched.first_name && Boolean(formik.errors.first_name)
-                                }
-                                helperText={formik.touched.first_name && formik.errors.first_name}
-                            />
-                            <TextField
-                                fullWidth
-                                id="last_name"
-                                name="last_name"
-                                label="Nom"
-                                value={formik.values.last_name}
-                                onChange={formik.handleChange}
-                                error={formik.touched.last_name && Boolean(formik.errors.last_name)}
-                                helperText={formik.touched.last_name && formik.errors.last_name}
-                            />
-                            <TextField
-                                fullWidth
-                                id="email"
-                                name="email"
-                                label="Email"
-                                value={formik.values.email}
-                                onChange={formik.handleChange}
-                                error={formik.touched.email && Boolean(formik.errors.email)}
-                                helperText={formik.touched.email && formik.errors.email}
-                            />
-                            <TextField
-                                fullWidth
-                                id="address"
-                                name="address"
-                                label="Adresse"
-                                value={formik.values.address}
-                                onChange={formik.handleChange}
-                                error={formik.touched.address && Boolean(formik.errors.address)}
-                                helperText={formik.touched.address && formik.errors.address}
-                            />
-                            <TextField
-                                fullWidth
-                                id="postal_code"
-                                name="postal_code"
-                                label="Code postal"
-                                value={formik.values.postal_code}
-                                onChange={formik.handleChange}
-                                error={
-                                    formik.touched.postal_code && Boolean(formik.errors.postal_code)
-                                }
-                                helperText={formik.touched.postal_code && formik.errors.postal_code}
-                            />
-                            <TextField
-                                fullWidth
-                                id="city"
-                                name="city"
-                                label="Ville"
-                                value={formik.values.city}
-                                onChange={formik.handleChange}
-                                error={formik.touched.city && Boolean(formik.errors.city)}
-                                helperText={formik.touched.city && formik.errors.city}
-                            />
+                            <Grid container spacing={2} sx={{ mt: 1 }}>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        id="first_name"
+                                        name="first_name"
+                                        label="Prénom"
+                                        value={formik.values.first_name}
+                                        onChange={formik.handleChange}
+                                        error={
+                                            formik.touched.first_name &&
+                                            Boolean(formik.errors.first_name)
+                                        }
+                                        helperText={
+                                            formik.touched.first_name && formik.errors.first_name
+                                        }
+                                        mb={2}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        id="last_name"
+                                        name="last_name"
+                                        label="Nom"
+                                        value={formik.values.last_name}
+                                        onChange={formik.handleChange}
+                                        error={
+                                            formik.touched.last_name &&
+                                            Boolean(formik.errors.last_name)
+                                        }
+                                        helperText={
+                                            formik.touched.last_name && formik.errors.last_name
+                                        }
+                                        mb={2}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        id="email"
+                                        name="email"
+                                        label="Email"
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.email && Boolean(formik.errors.email)}
+                                        helperText={formik.touched.email && formik.errors.email}
+                                        mb={2}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        id="address"
+                                        name="address"
+                                        label="Adresse"
+                                        value={formik.values.address}
+                                        onChange={formik.handleChange}
+                                        error={
+                                            formik.touched.address && Boolean(formik.errors.address)
+                                        }
+                                        helperText={formik.touched.address && formik.errors.address}
+                                        mb={2}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        id="postal_code"
+                                        name="postal_code"
+                                        label="Code postal"
+                                        value={formik.values.postal_code}
+                                        onChange={formik.handleChange}
+                                        error={
+                                            formik.touched.postal_code &&
+                                            Boolean(formik.errors.postal_code)
+                                        }
+                                        helperText={
+                                            formik.touched.postal_code && formik.errors.postal_code
+                                        }
+                                        mb={2}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        id="city"
+                                        name="city"
+                                        label="Ville"
+                                        value={formik.values.city}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.city && Boolean(formik.errors.city)}
+                                        helperText={formik.touched.city && formik.errors.city}
+                                        mb={2}
+                                    />
+                                </Grid>
+                            </Grid>
                         </form>
                     </DialogContent>
                 )}
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
-                    <Button type="submit" onClick={formik.handleSubmit}>
-                        Submit
+                    <Button onClick={handleClose} variant="contained" color="error">
+                        Annuler
+                    </Button>
+                    <Button
+                        type="submit"
+                        onClick={formik.handleSubmit}
+                        variant="contained"
+                        color="success"
+                    >
+                        Modifier
                     </Button>
                 </DialogActions>
             </Dialog>
