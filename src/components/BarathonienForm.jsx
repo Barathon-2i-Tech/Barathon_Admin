@@ -11,11 +11,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 function BarathonienForm({ barathonienId, open, handleClose }) {
-    console.log('barathonien id chargement composant: ' + barathonienId);
-
     const { user } = useAuth();
     const ApiToken = user.token;
-    const [barathonien, setBarathonien] = useState({});
     const [loading, setLoading] = useState(true);
 
     const validationSchema = Yup.object({
@@ -29,13 +26,14 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
 
     const formik = useFormik({
         initialValues: {
-            first_name: barathonien.first_name,
-            last_name: barathonien.last_name,
-            email: barathonien.email,
-            address: barathonien.address,
-            postal_code: barathonien.postal_code,
-            city: barathonien.city,
+            first_name: '',
+            last_name: '',
+            email: '',
+            address: '',
+            postal_code: '',
+            city: '',
         },
+        enableReinitialize: true,
         validationSchema,
         onSubmit: (values) => handleModify(values),
     });
@@ -54,31 +52,15 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            console.log(response.data.data[0]);
-            setBarathonien(response.data.data[0]);
+            formik.setValues(response.data.data[0]);
             setLoading(false);
         } catch (error) {
             console.log(error);
         }
     }
     useEffect(() => {
-        if (barathonienId) {
-            getBarathonienById(barathonienId);
-        }
+        getBarathonienById(barathonienId);
     }, [open]);
-
-    useEffect(() => {
-        if (barathonien) {
-            formik.setValues({
-                first_name: barathonien.first_name,
-                last_name: barathonien.last_name,
-                email: barathonien.email,
-                address: barathonien.address,
-                postal_code: barathonien.postal_code,
-                city: barathonien.city,
-            });
-        }
-    }, [barathonien]);
 
     return (
         <>
@@ -168,7 +150,7 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
 }
 
 BarathonienForm.propTypes = {
-    barathonienId: PropTypes.number.isRequired,
+    barathonienId: PropTypes.number,
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
 };
