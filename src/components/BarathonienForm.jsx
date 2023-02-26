@@ -16,7 +16,7 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [barathonien, setBarathonien] = useState({});
-    console.log({ barathonien });
+    const [loading, setLoading] = useState(true);
 
     const validationSchema = Yup.object({
         first_name: Yup.string().required('Requis'),
@@ -42,10 +42,10 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
 
     async function handleModify(values) {
         console.log('modification du barathonien ID n° ' + values.id);
+        handleClose();
     }
 
     async function getBarathonienById(barathonienId) {
-        console.log('barathonien id dans fonction getBarathonienByid: ' + barathonienId);
         try {
             const response = await Axios.api.get(`/barathonien/${barathonienId}`, {
                 headers: {
@@ -54,85 +54,108 @@ function BarathonienForm({ barathonienId, open, handleClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            console.log(response.data.data);
-            setBarathonien(response.data.data);
-            await new Promise((resolve) => setTimeout(resolve));
+            console.log(response.data.data[0]);
+            setBarathonien(response.data.data[0]);
+            setLoading(false);
         } catch (error) {
             console.log(error);
         }
     }
     useEffect(() => {
-        getBarathonienById(barathonienId);
+        if (barathonienId) {
+            getBarathonienById(barathonienId);
+        }
     }, [open]);
+
+    useEffect(() => {
+        if (barathonien) {
+            formik.setValues({
+                first_name: barathonien.first_name,
+                last_name: barathonien.last_name,
+                email: barathonien.email,
+                address: barathonien.address,
+                postal_code: barathonien.postal_code,
+                city: barathonien.city,
+            });
+        }
+    }, [barathonien]);
 
     return (
         <>
             <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{"Modification de l'utilisateur"}</DialogTitle>
-                <DialogContent>
-                    <form onSubmit={formik.handleSubmit}>
-                        <TextField
-                            fullWidth
-                            id="first_name"
-                            name="first_name"
-                            label="Prénom"
-                            value={formik.values.first_name}
-                            onChange={formik.handleChange}
-                            error={formik.touched.first_name && Boolean(formik.errors.first_name)}
-                            helperText={formik.touched.first_name && formik.errors.first_name}
-                        />
-                        <TextField
-                            fullWidth
-                            id="last_name"
-                            name="last_name"
-                            label="Nom"
-                            value={formik.values.last_name}
-                            onChange={formik.handleChange}
-                            error={formik.touched.last_name && Boolean(formik.errors.last_name)}
-                            helperText={formik.touched.last_name && formik.errors.last_name}
-                        />
-                        <TextField
-                            fullWidth
-                            id="email"
-                            name="email"
-                            label="Email"
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                            error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                        />
-                        <TextField
-                            fullWidth
-                            id="address"
-                            name="address"
-                            label="Adresse"
-                            value={formik.values.address}
-                            onChange={formik.handleChange}
-                            error={formik.touched.address && Boolean(formik.errors.address)}
-                            helperText={formik.touched.address && formik.errors.address}
-                        />
-                        <TextField
-                            fullWidth
-                            id="postal_code"
-                            name="postal_code"
-                            label="Code postal"
-                            value={formik.values.postal_code}
-                            onChange={formik.handleChange}
-                            error={formik.touched.postal_code && Boolean(formik.errors.postal_code)}
-                            helperText={formik.touched.postal_code && formik.errors.postal_code}
-                        />
-                        <TextField
-                            fullWidth
-                            id="city"
-                            name="city"
-                            label="Ville"
-                            value={formik.values.city}
-                            onChange={formik.handleChange}
-                            error={formik.touched.city && Boolean(formik.errors.city)}
-                            helperText={formik.touched.city && formik.errors.city}
-                        />
-                    </form>
-                </DialogContent>
+                {loading ? (
+                    <DialogContent>{'chargement en cours'}</DialogContent>
+                ) : (
+                    <DialogContent>
+                        <form onSubmit={formik.handleSubmit}>
+                            <TextField
+                                fullWidth
+                                id="first_name"
+                                name="first_name"
+                                label="Prénom"
+                                value={formik.values.first_name}
+                                onChange={formik.handleChange}
+                                error={
+                                    formik.touched.first_name && Boolean(formik.errors.first_name)
+                                }
+                                helperText={formik.touched.first_name && formik.errors.first_name}
+                            />
+                            <TextField
+                                fullWidth
+                                id="last_name"
+                                name="last_name"
+                                label="Nom"
+                                value={formik.values.last_name}
+                                onChange={formik.handleChange}
+                                error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                                helperText={formik.touched.last_name && formik.errors.last_name}
+                            />
+                            <TextField
+                                fullWidth
+                                id="email"
+                                name="email"
+                                label="Email"
+                                value={formik.values.email}
+                                onChange={formik.handleChange}
+                                error={formik.touched.email && Boolean(formik.errors.email)}
+                                helperText={formik.touched.email && formik.errors.email}
+                            />
+                            <TextField
+                                fullWidth
+                                id="address"
+                                name="address"
+                                label="Adresse"
+                                value={formik.values.address}
+                                onChange={formik.handleChange}
+                                error={formik.touched.address && Boolean(formik.errors.address)}
+                                helperText={formik.touched.address && formik.errors.address}
+                            />
+                            <TextField
+                                fullWidth
+                                id="postal_code"
+                                name="postal_code"
+                                label="Code postal"
+                                value={formik.values.postal_code}
+                                onChange={formik.handleChange}
+                                error={
+                                    formik.touched.postal_code && Boolean(formik.errors.postal_code)
+                                }
+                                helperText={formik.touched.postal_code && formik.errors.postal_code}
+                            />
+                            <TextField
+                                fullWidth
+                                id="city"
+                                name="city"
+                                label="Ville"
+                                value={formik.values.city}
+                                onChange={formik.handleChange}
+                                error={formik.touched.city && Boolean(formik.errors.city)}
+                                helperText={formik.touched.city && formik.errors.city}
+                            />
+                        </form>
+                    </DialogContent>
+                )}
                 <DialogActions>
                     <Button onClick={handleClose}>Annuler</Button>
                     <Button type="submit" onClick={formik.handleSubmit}>
