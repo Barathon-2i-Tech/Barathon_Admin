@@ -15,6 +15,7 @@ import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
 import { green, red, orange, grey } from '@mui/material/colors';
 import OwnerForm from './OwnerForm';
+import HeaderDatagrid from './HeaderDatagrid';
 
 function OwnersDatagrid() {
     const { user } = useAuth();
@@ -174,7 +175,7 @@ function OwnersDatagrid() {
         {
             field: 'deleted_at',
             headerName: 'Actif',
-            flex: 0.3,
+            flex: 0.2,
             renderCell: ({ row: { deleted_at } }) => {
                 return (
                     <Box
@@ -240,7 +241,7 @@ function OwnersDatagrid() {
     return (
         <div>
             <Box sx={{ height: 400, width: '100%', mt: 10 }}>
-                <h1>Professionels</h1>
+                <HeaderDatagrid title="Professionnels" />
                 <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
             </Box>
             <Dialog

@@ -15,6 +15,7 @@ import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
 import { green, red } from '@mui/material/colors';
 import BarathonienForm from './BarathonienForm';
+import HeaderDatagrid from './HeaderDatagrid';
 
 function BarathoniensDatagrid() {
     const { user } = useAuth();
@@ -180,7 +181,7 @@ function BarathoniensDatagrid() {
     return (
         <div>
             <Box sx={{ height: 400, width: '100%' }}>
-                <h1>Barathoniens</h1>
+                <HeaderDatagrid title="Barathoniens" />
                 <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
             </Box>
             <Dialog

@@ -1,5 +1,6 @@
 import Paper from '@mui/material/Paper';
 import BarathoniensDatagrid from '../../components/BarathoniensDatagrid';
+import Copyright from '../../components/Copyright';
 import OwnersDatagrid from '../../components/OwnersDatagrid';
 
 export const UsersPage = () => {
@@ -9,13 +10,13 @@ export const UsersPage = () => {
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    //height: '80vh',
                     width: '100%',
                     padding: '1rem',
                 }}
             >
                 <BarathoniensDatagrid />
                 <OwnersDatagrid />
+                <Copyright sx={{ pt: 15 }} />
             </Paper>
         </>
     );
