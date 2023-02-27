@@ -33,6 +33,7 @@ function OwnersDatagrid() {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
+            console.log(response.data.data);
             setAllOwners(response.data.data);
         } catch (error) {
             console.log(error);
@@ -98,12 +99,28 @@ function OwnersDatagrid() {
         siren: owner.siren,
         kbis: owner.kbis,
         phone: owner.phone,
-        status: owner.comment,
+        status: JSON.parse(owner.comment),
         deleted_at: owner.deleted_at,
     }));
 
     function getFullName(params) {
         return `${params.row.first_name || ''} ${params.row.last_name || ''}`;
+    }
+
+    function getStatus(params) {
+        switch (params.row.status.code) {
+            case 'OWNER_VALID':
+                return 'Validé';
+
+            case 'OWNER_REFUSE':
+                return 'Refusé';
+
+            case 'OWNER_PENDING':
+                return 'En attente';
+
+            default:
+                return 'Erreur';
+        }
     }
 
     const columns = [
@@ -113,7 +130,7 @@ function OwnersDatagrid() {
         { field: 'siren', headerName: 'Siren', flex: 0.4 },
         { field: 'kbis', headerName: 'Kbis', flex: 0.4 },
         { field: 'phone', headerName: 'Téléphone', flex: 0.4 },
-        { field: 'status', headerName: 'Status', flex: 0.4 },
+        { field: 'status', headerName: 'Status', flex: 0.4, valueGetter: getStatus },
         {
             field: 'deleted_at',
             headerName: 'Actif',
