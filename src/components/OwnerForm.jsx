@@ -13,7 +13,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import InfinityLoader from './InfinityLoader';
 
-function BarathonienForm({ userId, open, handleClose }) {
+function OwnerForm({ userId, open, handleClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
@@ -40,9 +40,7 @@ function BarathonienForm({ userId, open, handleClose }) {
         first_name: Yup.string().required('Requis'),
         last_name: Yup.string().required('Requis'),
         email: Yup.string().email('Email invalide').required('Requis'),
-        address: Yup.string().required('Requis').min(5, "L'adresse est invalide"),
-        postal_code: Yup.string().required('Requis').min(5, 'Le code postal est invalide'),
-        city: Yup.string().required('Requis'),
+        phone: Yup.string().max(13, 'Le numéro saisie est invalide').nullable(),
     });
 
     const formik = useFormik({
@@ -50,9 +48,7 @@ function BarathonienForm({ userId, open, handleClose }) {
             first_name: '',
             last_name: '',
             email: '',
-            address: '',
-            postal_code: '',
-            city: '',
+            phone: '',
         },
         enableReinitialize: true,
         validationSchema,
@@ -61,7 +57,7 @@ function BarathonienForm({ userId, open, handleClose }) {
 
     async function handleModify(values) {
         try {
-            await Axios.api.post(`/barathonien/update/${userId}`, values, {
+            await Axios.api.post(`/pro/update/${userId}`, values, {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
@@ -80,9 +76,10 @@ function BarathonienForm({ userId, open, handleClose }) {
         }
     }
 
-    async function getBarathonienById(userId) {
+    async function getOwnerById(userId) {
         try {
-            const response = await Axios.api.get(`/barathonien/${userId}`, {
+            console.log(userId);
+            const response = await Axios.api.get(`/pro/${userId}`, {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
@@ -97,10 +94,9 @@ function BarathonienForm({ userId, open, handleClose }) {
     }
     useEffect(() => {
         if (open) {
-            getBarathonienById(userId);
+            getOwnerById(userId);
         }
     }, [open]);
-
     return (
         <>
             <Toaster />
@@ -163,49 +159,17 @@ function BarathonienForm({ userId, open, handleClose }) {
                                         mb={2}
                                     />
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        id="address"
-                                        name="address"
-                                        label="Adresse"
-                                        value={formik.values.address}
-                                        onChange={formik.handleChange}
-                                        error={
-                                            formik.touched.address && Boolean(formik.errors.address)
-                                        }
-                                        helperText={formik.touched.address && formik.errors.address}
-                                        mb={2}
-                                    />
-                                </Grid>
+
                                 <Grid item xs={6}>
                                     <TextField
                                         fullWidth
-                                        id="postal_code"
-                                        name="postal_code"
-                                        label="Code postal"
-                                        value={formik.values.postal_code}
+                                        id="phone"
+                                        name="phone"
+                                        label="Téléphone"
+                                        value={formik.values.phone}
                                         onChange={formik.handleChange}
-                                        error={
-                                            formik.touched.postal_code &&
-                                            Boolean(formik.errors.postal_code)
-                                        }
-                                        helperText={
-                                            formik.touched.postal_code && formik.errors.postal_code
-                                        }
-                                        mb={2}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        fullWidth
-                                        id="city"
-                                        name="city"
-                                        label="Ville"
-                                        value={formik.values.city}
-                                        onChange={formik.handleChange}
-                                        error={formik.touched.city && Boolean(formik.errors.city)}
-                                        helperText={formik.touched.city && formik.errors.city}
+                                        error={formik.touched.phone && Boolean(formik.errors.phone)}
+                                        helperText={formik.touched.phone && formik.errors.phone}
                                         mb={2}
                                     />
                                 </Grid>
@@ -231,10 +195,10 @@ function BarathonienForm({ userId, open, handleClose }) {
     );
 }
 
-BarathonienForm.propTypes = {
+OwnerForm.propTypes = {
     userId: PropTypes.number,
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
 };
 
-export default BarathonienForm;
+export default OwnerForm;

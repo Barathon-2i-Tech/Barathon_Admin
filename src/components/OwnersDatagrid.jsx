@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
 import { green, red, orange, grey } from '@mui/material/colors';
+import OwnerForm from './OwnerForm';
 
 function OwnersDatagrid() {
     const { user } = useAuth();
@@ -33,7 +34,6 @@ function OwnersDatagrid() {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            console.log(response.data.data);
             setAllOwners(response.data.data);
         } catch (error) {
             console.log(error);
@@ -129,7 +129,12 @@ function OwnersDatagrid() {
         { field: 'email', headerName: 'Email', flex: 0.4 },
         { field: 'siren', headerName: 'Siren', flex: 0.4 },
         { field: 'kbis', headerName: 'Kbis', flex: 0.4 },
-        { field: 'phone', headerName: 'Téléphone', flex: 0.4 },
+        {
+            field: 'phone',
+            headerName: 'Téléphone',
+            flex: 0.4,
+            valueGetter: ({ row }) => row.phone || 'NC',
+        },
         {
             field: 'status',
             headerName: 'Status',
@@ -246,7 +251,7 @@ function OwnersDatagrid() {
                     <DialogContentText id="alert-dialog-description">
                         {`Êtes-vous sûr de vouloir ${
                             selectedOwnerId !== null &&
-                            allOwners.find((barathonien) => barathonien.user_id === selectedOwnerId)
+                            allOwners.find((owner) => owner.user_id === selectedOwnerId)
                                 ?.deleted_at === null
                                 ? 'supprimer'
                                 : 'restaurer'
@@ -256,14 +261,15 @@ function OwnersDatagrid() {
                 <DialogActions>
                     <Button onClick={handleClose}>Annuler</Button>
                     {selectedOwnerId !== null &&
-                    allOwners.find((barathonien) => barathonien.user_id === selectedOwnerId)
-                        ?.deleted_at === null ? (
+                    allOwners.find((owner) => owner.user_id === selectedOwnerId)?.deleted_at ===
+                        null ? (
                         <Button onClick={() => handleDelete(selectedOwnerId)}>Supprimer</Button>
                     ) : (
                         <Button onClick={() => handleRestore(selectedOwnerId)}>Restaurer</Button>
                     )}
                 </DialogActions>
             </Dialog>
+            <OwnerForm open={openForm} handleClose={handleClose} userId={selectedOwnerId} />
         </div>
     );
 }
