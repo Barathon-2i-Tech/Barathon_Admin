@@ -16,7 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { green, red } from '@mui/material/colors';
 import BarathonienForm from './BarathonienForm';
 
-function BarathonienDatagrid() {
+function BarathoniensDatagrid() {
     const { user } = useAuth();
     const ApiToken = user.token;
 
@@ -178,55 +178,53 @@ function BarathonienDatagrid() {
     ];
 
     return (
-        <>
-            <div>
-                <Box sx={{ height: 400, width: '100%' }}>
-                    <h1>Barathoniens</h1>
-                    <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
-                </Box>
-                <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{'Confirmation'}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {`Êtes-vous sûr de vouloir ${
-                                selectedBarathonienId !== null &&
-                                allBarathoniens.find(
-                                    (barathonien) => barathonien.user_id === selectedBarathonienId,
-                                )?.deleted_at === null
-                                    ? 'supprimer'
-                                    : 'restaurer'
-                            } cet utilisateur ?`}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Annuler</Button>
-                        {selectedBarathonienId !== null &&
-                        allBarathoniens.find(
-                            (barathonien) => barathonien.user_id === selectedBarathonienId,
-                        )?.deleted_at === null ? (
-                            <Button onClick={() => handleDelete(selectedBarathonienId)}>
-                                Supprimer
-                            </Button>
-                        ) : (
-                            <Button onClick={() => handleRestore(selectedBarathonienId)}>
-                                Restaurer
-                            </Button>
-                        )}
-                    </DialogActions>
-                </Dialog>
-                <BarathonienForm
-                    open={openForm}
-                    handleClose={handleClose}
-                    userId={selectedBarathonienId}
-                />
-            </div>
-        </>
+        <div>
+            <Box sx={{ height: 400, width: '100%' }}>
+                <h1>Barathoniens</h1>
+                <DataGrid rows={rows} columns={columns} components={{ Toolbar: GridToolbar }} />
+            </Box>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{'Confirmation'}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {`Êtes-vous sûr de vouloir ${
+                            selectedBarathonienId !== null &&
+                            allBarathoniens.find(
+                                (barathonien) => barathonien.user_id === selectedBarathonienId,
+                            )?.deleted_at === null
+                                ? 'supprimer'
+                                : 'restaurer'
+                        } cet utilisateur ?`}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Annuler</Button>
+                    {selectedBarathonienId !== null &&
+                    allBarathoniens.find(
+                        (barathonien) => barathonien.user_id === selectedBarathonienId,
+                    )?.deleted_at === null ? (
+                        <Button onClick={() => handleDelete(selectedBarathonienId)}>
+                            Supprimer
+                        </Button>
+                    ) : (
+                        <Button onClick={() => handleRestore(selectedBarathonienId)}>
+                            Restaurer
+                        </Button>
+                    )}
+                </DialogActions>
+            </Dialog>
+            <BarathonienForm
+                open={openForm}
+                handleClose={handleClose}
+                userId={selectedBarathonienId}
+            />
+        </div>
     );
 }
 
-export default BarathonienDatagrid;
+export default BarathoniensDatagrid;
