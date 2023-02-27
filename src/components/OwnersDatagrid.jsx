@@ -208,7 +208,10 @@ function OwnersDatagrid() {
                             handleClickOpenForm(params.row.id);
                         }}
                         startIcon={<EditIcon />}
-                        disabled={params.row.deleted_at !== null}
+                        disabled={
+                            params.row.deleted_at !== null ||
+                            params.row.status.code !== 'OWNER_VALID'
+                        }
                     >
                         Modifier
                     </Button>
