@@ -13,7 +13,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
-import { green, red } from '@mui/material/colors';
+import { green, red, orange, grey } from '@mui/material/colors';
 
 function OwnersDatagrid() {
     const { user } = useAuth();
@@ -130,7 +130,42 @@ function OwnersDatagrid() {
         { field: 'siren', headerName: 'Siren', flex: 0.4 },
         { field: 'kbis', headerName: 'Kbis', flex: 0.4 },
         { field: 'phone', headerName: 'Téléphone', flex: 0.4 },
-        { field: 'status', headerName: 'Status', flex: 0.4, valueGetter: getStatus },
+        {
+            field: 'status',
+            headerName: 'Status',
+            flex: 0.4,
+            valueGetter: getStatus,
+            renderCell: ({ row: { status } }) => {
+                let backgroundColor = null;
+                switch (status.code) {
+                    case 'OWNER_VALID':
+                        backgroundColor = green[400];
+                        break;
+                    case 'OWNER_PENDING':
+                        backgroundColor = orange[400];
+                        break;
+                    case 'OWNER_REFUSE':
+                        backgroundColor = red[400];
+                        break;
+                    default:
+                        backgroundColor = grey[400];
+                        break;
+                }
+                return (
+                    <Box
+                        width="100%"
+                        m="0 auto"
+                        p="5px"
+                        display="flex"
+                        justifyContent="center"
+                        backgroundColor={backgroundColor}
+                        borderRadius="5px"
+                    >
+                        {getStatus({ row: { status } })}
+                    </Box>
+                );
+            },
+        },
         {
             field: 'deleted_at',
             headerName: 'Actif',
