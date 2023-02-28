@@ -205,16 +205,15 @@ function BarathoniensDatagrid() {
             icon: '👏',
         });
     };
-  
+
     const errorToast = () => {
         toast.error('Nous avons rencontré un problème');
     };
-  
+
     const errorUniqueEmailToast = () => {
         toast.error("L'adresse email saisie n'est pas disponible");
     };
 
-    
     async function handleModifyBarathonien(values) {
         try {
             await Axios.api.post(`/barathonien/update/${selectedBarathonienId}`, values, {
@@ -243,8 +242,7 @@ function BarathoniensDatagrid() {
         address: '',
         postal_code: '',
         city: '',
-    }
-
+    };
 
     /******************************************/
 
@@ -289,13 +287,13 @@ function BarathoniensDatagrid() {
                     )}
                 </DialogActions>
             </Dialog>
-            <ModifyUserForm 
-            open={openForm} 
-            handleClose={handleClose} 
-            validationSchema={validationSchemaBarathonien} 
-            handleModify={handleModifyBarathonien}
-            url={`/barathonien/${selectedBarathonienId}`}
-            initialValues={BarathonienInitialValues}
+            <ModifyUserForm
+                open={openForm}
+                handleClose={handleClose}
+                validationSchema={validationSchemaBarathonien}
+                handleModify={handleModifyBarathonien}
+                url={`/barathonien/${selectedBarathonienId}`}
+                initialValues={BarathonienInitialValues}
             />
         </div>
     );
