@@ -29,7 +29,6 @@ function UserDatagrid() {
     const [openOwnerForm, setOpenOwnerForm] = useState(false);
 
     function handleClose() {
-        console.log('fermeture modal avec tous les set Open');
         setOpenBarathonien(false);
         setOpenBarathonienForm(false);
         setOpenOwner(false);
@@ -40,6 +39,8 @@ function UserDatagrid() {
         field: 'deleted_at',
         headerName: 'Actif',
         flex: 0.3,
+        headerAlign: 'center',
+        align: 'center',
         renderCell: ({ row: { deleted_at } }) => {
             return (
                 <Box
@@ -130,18 +131,45 @@ function UserDatagrid() {
     }
 
     const barathonienColumns = [
-        { field: 'id', headerName: 'ID', flex: 0.2 },
-        { field: 'fullname', headerName: 'Nom complet', flex: 0.7, valueGetter: getFullName },
-        { field: 'birthday', headerName: 'Date de naissance', flex: 0.5 },
-        { field: 'address', headerName: 'Adresse', flex: 0.7 },
-        { field: 'postal_code', headerName: 'Code postal', flex: 0.4 },
-        { field: 'city', headerName: 'Ville', flex: 0.4 },
+        { field: 'id', headerName: 'ID', flex: 0.1, headerAlign: 'center', align: 'center' },
+        {
+            field: 'fullname',
+            headerName: 'Nom complet',
+            flex: 0.7,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: getFullName,
+        },
+        {
+            field: 'birthday',
+            headerName: 'Date de naissance',
+            flex: 0.5,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'address',
+            headerName: 'Adresse',
+            flex: 0.7,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        {
+            field: 'postal_code',
+            headerName: 'Code postal',
+            flex: 0.4,
+            headerAlign: 'center',
+            align: 'center',
+        },
+        { field: 'city', headerName: 'Ville', flex: 0.4, headerAlign: 'center', align: 'center' },
         rowCommonDeletedAt,
         {
             field: 'action',
             headerName: 'Action',
             flex: 0.7,
             disableClickEventBubbling: true,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: (params) => (
                 <>
                     <Button
@@ -234,21 +262,32 @@ function UserDatagrid() {
     }));
 
     const ownersColumns = [
-        { field: 'id', headerName: 'ID', flex: 0.2 },
-        { field: 'fullname', headerName: 'Nom complet', flex: 0.7, valueGetter: getFullName },
-        { field: 'email', headerName: 'Email', flex: 0.4 },
-        { field: 'siren', headerName: 'Siren', flex: 0.4 },
-        { field: 'kbis', headerName: 'Kbis', flex: 0.4 },
+        { field: 'id', headerName: 'ID', flex: 0.1, headerAlign: 'center', align: 'center' },
+        {
+            field: 'fullname',
+            headerName: 'Nom complet',
+            flex: 0.7,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: getFullName,
+        },
+        { field: 'email', headerName: 'Email', flex: 0.4, headerAlign: 'center', align: 'center' },
+        { field: 'siren', headerName: 'Siren', flex: 0.4, headerAlign: 'center', align: 'center' },
+        { field: 'kbis', headerName: 'Kbis', flex: 0.4, headerAlign: 'center', align: 'center' },
         {
             field: 'phone',
             headerName: 'Téléphone',
             flex: 0.4,
-            valueGetter: ({ row }) => row.phone || 'NC',
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: ({ row }) => row.phone || 'N.C.',
         },
         {
             field: 'status',
             headerName: 'Status',
             flex: 0.4,
+            headerAlign: 'center',
+            align: 'center',
             valueGetter: getStatus,
             renderCell: ({ row: { status } }) => {
                 let backgroundColor = null;
@@ -287,6 +326,8 @@ function UserDatagrid() {
             headerName: 'Action',
             flex: 0.7,
             disableClickEventBubbling: true,
+            headerAlign: 'center',
+            align: 'center',
             renderCell: (params) => (
                 <>
                     <Button
@@ -375,7 +416,7 @@ function UserDatagrid() {
                     initialValues={barathonienInitialValues}
                 />
             </div>
-            <div>
+            <div style={{ marginTop: '100px' }}>
                 <Box sx={{ height: 400, width: '100%' }}>
                     <HeaderDatagrid title="Professionnels" />
                     <DataGrid

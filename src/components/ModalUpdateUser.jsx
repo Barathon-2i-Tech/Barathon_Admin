@@ -21,7 +21,6 @@ function ModalUpdateUser({ onClose, users, selectedUserId, deleteUrl, restoreUrl
                 },
             });
             onClose();
-            console.log('bien supprimmer');
         } catch (error) {
             console.log(error);
         }
@@ -37,7 +36,6 @@ function ModalUpdateUser({ onClose, users, selectedUserId, deleteUrl, restoreUrl
                 },
             });
             onClose();
-            console.log('bien restorer');
         } catch (error) {
             console.log(error);
         }
