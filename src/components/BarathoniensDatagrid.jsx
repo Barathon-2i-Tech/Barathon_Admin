@@ -14,8 +14,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
 import { green, red } from '@mui/material/colors';
-import BarathonienForm from './BarathonienForm';
 import HeaderDatagrid from './HeaderDatagrid';
+
+//*****refacto */
+
+import * as Yup from 'yup';
+import ModifyUserForm from './ModifyUserForm';
+import toast from 'react-hot-toast';
+
+/********** */
 
 function BarathoniensDatagrid() {
     const { user } = useAuth();
@@ -178,6 +185,69 @@ function BarathoniensDatagrid() {
         },
     ];
 
+    /************refactoring *******************/
+
+    const validationSchemaBarathonien = Yup.object({
+        first_name: Yup.string().required('Requis'),
+        last_name: Yup.string().required('Requis'),
+        email: Yup.string().email('Email invalide').required('Requis'),
+        address: Yup.string().required('Requis').min(5, "L'adresse est invalide"),
+        postal_code: Yup.string().required('Requis').min(5, 'Le code postal est invalide'),
+        city: Yup.string().required('Requis'),
+    });
+
+    const successToast = () => {
+        toast.success('Mise à jour réussie', {
+            position: 'top-center',
+            style: {
+                padding: '16px',
+            },
+            icon: '👏',
+        });
+    };
+  
+    const errorToast = () => {
+        toast.error('Nous avons rencontré un problème');
+    };
+  
+    const errorUniqueEmailToast = () => {
+        toast.error("L'adresse email saisie n'est pas disponible");
+    };
+
+    
+    async function handleModifyBarathonien(values) {
+        try {
+            await Axios.api.post(`/barathonien/update/${selectedBarathonienId}`, values, {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            successToast();
+            handleClose();
+        } catch (error) {
+            if (error.response.data.message === 'validation.unique') {
+                errorUniqueEmailToast();
+            } else {
+                errorToast();
+                console.log(error);
+            }
+        }
+    }
+
+    const BarathonienInitialValues = {
+        first_name: '',
+        last_name: '',
+        email: '',
+        address: '',
+        postal_code: '',
+        city: '',
+    }
+
+
+    /******************************************/
+
     return (
         <div>
             <Box sx={{ height: 400, width: '100%' }}>
@@ -219,10 +289,13 @@ function BarathoniensDatagrid() {
                     )}
                 </DialogActions>
             </Dialog>
-            <BarathonienForm
-                open={openForm}
-                handleClose={handleClose}
-                userId={selectedBarathonienId}
+            <ModifyUserForm 
+            open={openForm} 
+            handleClose={handleClose} 
+            validationSchema={validationSchemaBarathonien} 
+            handleModify={handleModifyBarathonien}
+            url={`/barathonien/${selectedBarathonienId}`}
+            initialValues={BarathonienInitialValues}
             />
         </div>
     );
