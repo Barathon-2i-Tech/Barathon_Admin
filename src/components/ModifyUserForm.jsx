@@ -13,6 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import InfinityLoader from './InfinityLoader';
 import BarathonienFieldForm from './Form/BarathonienFieldForm';
 import { ModalContext } from './contexts/ModalContextProvider';
+import OwnerFieldForm from './Form/OwnerFieldForm';
 
 function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl, initialValues }) {
     const { user } = useAuth();
@@ -88,6 +89,13 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
         }
     }, [open]);
 
+    const content =
+        formik.values.barathonien_id !== null ? (
+            <BarathonienFieldForm formik={formik} />
+        ) : (
+            <OwnerFieldForm formik={formik} />
+        );
+
     return (
         <>
             <Toaster />
@@ -101,7 +109,7 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
                     <DialogContent>
                         <form onSubmit={formik.handleSubmit}>
                             <Grid container spacing={2} sx={{ mt: 1 }}>
-                                <BarathonienFieldForm formik={formik} />
+                                {content}
                             </Grid>
                         </form>
                     </DialogContent>

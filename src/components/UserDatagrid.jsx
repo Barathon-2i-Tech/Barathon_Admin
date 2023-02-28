@@ -69,6 +69,7 @@ function UserDatagrid() {
         address: '',
         postal_code: '',
         city: '',
+        userType: 'barathonien',
     };
 
     const handleClickOpenBarathonien = (id) => {
@@ -200,6 +201,7 @@ function UserDatagrid() {
         last_name: '',
         email: '',
         phone: '',
+        userType: 'owner',
     };
     function getStatus(params) {
         switch (params.row.status.code) {
@@ -345,6 +347,7 @@ function UserDatagrid() {
             ),
         },
     ];
+
     const validationSchemaOwner = Yup.object({
         first_name: Yup.string().required('Requis'),
         last_name: Yup.string().required('Requis'),
@@ -389,6 +392,7 @@ function UserDatagrid() {
                     getUserByIdUrl={`/barathonien/${selectedBarathonienId}`}
                     updateUserUrl={`/barathonien/update/${selectedBarathonienId}`}
                     initialValues={barathonienInitialValues}
+                    userType={barathonienInitialValues.userType}
                 />
             </div>
             <div>
