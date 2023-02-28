@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState /* useContext */ } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Axios from '../utils/axiosUrl';
@@ -14,7 +14,6 @@ import HeaderDatagrid from './HeaderDatagrid';
 import * as Yup from 'yup';
 import ModifyUserForm from './ModifyUserForm';
 import ModalUpdateUser from './ModalUpdateUser';
-import { ModalContext } from './contexts/ModalContextProvider';
 
 function UserDatagrid() {
     const { user } = useAuth();
@@ -24,19 +23,18 @@ function UserDatagrid() {
     const [allOwners, setAllOwners] = useState([]);
     const [selectedBarathonienId, setSelectedBarathonienId] = useState(null);
     const [selectedOwnerId, setSelectedOwnerId] = useState(null);
+    const [openBarathonien, setOpenBarathonien] = useState(false);
+    const [openOwner, setOpenOwner] = useState(false);
+    const [openBarathonienForm, setOpenBarathonienForm] = useState(false);
+    const [openOwnerForm, setOpenOwnerForm] = useState(false);
 
-    const {
-        handleCloseModal,
-        openBarathonien,
-        openOwner,
-        openBarathonienForm,
-        openOwnerForm,
-        openBarathonienModal,
-        openBarathonienFormModal,
-        openOwnerModal,
-        openOwnerFormModal,
-    } = useContext(ModalContext);
-
+    function handleClose() {
+        console.log('fermeture modal avec tous les set Open');
+        setOpenBarathonien(false);
+        setOpenBarathonienForm(false);
+        setOpenOwner(false);
+        setOpenOwnerForm(false);
+    }
     /****************** barathonien ************************** */
     async function getBarathoniens() {
         try {
@@ -69,27 +67,26 @@ function UserDatagrid() {
         address: '',
         postal_code: '',
         city: '',
-        userType: 'barathonien',
     };
 
     const handleClickOpenBarathonien = (id) => {
         setSelectedBarathonienId(id);
-        openBarathonienModal(true);
+        setOpenBarathonien(true);
     };
 
     const handleClickOpenBarathonienForm = (id) => {
         setSelectedBarathonienId(id);
-        openBarathonienFormModal(true);
+        setOpenBarathonienForm(true);
     };
 
     const handleClickOpenOwner = (id) => {
         setSelectedOwnerId(id);
-        openOwnerModal(true);
+        setOpenOwner(true);
     };
 
     const handleClickOpenOwnerForm = (id) => {
         setSelectedOwnerId(id);
-        openOwnerFormModal(true);
+        setOpenOwnerForm(true);
     };
 
     const barathoniensRows = allBarathoniens.map((barathonien) => ({
@@ -201,8 +198,8 @@ function UserDatagrid() {
         last_name: '',
         email: '',
         phone: '',
-        userType: 'owner',
     };
+
     function getStatus(params) {
         switch (params.row.status.code) {
             case 'OWNER_VALID':
@@ -373,14 +370,14 @@ function UserDatagrid() {
                 </Box>
                 <Dialog
                     open={openBarathonien}
-                    onClose={handleCloseModal}
+                    onClose={handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
                     <ModalUpdateUser
                         users={allBarathoniens}
                         selectedUserId={selectedBarathonienId}
-                        onClose={handleCloseModal}
+                        onClose={handleClose}
                         deleteUrl={`/barathonien/delete/${selectedBarathonienId}`}
                         restoreUrl={`/barathonien/restore/${selectedBarathonienId}`}
                     />
@@ -388,11 +385,11 @@ function UserDatagrid() {
 
                 <ModifyUserForm
                     open={openBarathonienForm}
+                    onClose={handleClose}
                     validationSchema={validationSchemaBarathonien}
                     getUserByIdUrl={`/barathonien/${selectedBarathonienId}`}
                     updateUserUrl={`/barathonien/update/${selectedBarathonienId}`}
                     initialValues={barathonienInitialValues}
-                    userType={barathonienInitialValues.userType}
                 />
             </div>
             <div>
@@ -406,14 +403,14 @@ function UserDatagrid() {
                 </Box>
                 <Dialog
                     open={openOwner}
-                    onClose={handleCloseModal}
+                    onClose={handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
                     <ModalUpdateUser
                         users={allOwners}
                         selectedUserId={selectedOwnerId}
-                        onClose={handleCloseModal}
+                        onClose={handleClose}
                         deleteUrl={`/pro/delete/${selectedOwnerId}`}
                         restoreUrl={`/pro/restore/${selectedOwnerId}`}
                     />
@@ -421,6 +418,7 @@ function UserDatagrid() {
 
                 <ModifyUserForm
                     open={openOwnerForm}
+                    onClose={handleClose}
                     validationSchema={validationSchemaOwner}
                     getUserByIdUrl={`/pro/${selectedOwnerId}`}
                     updateUserUrl={`/pro/update/${selectedOwnerId}`}

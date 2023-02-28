@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import PropTypes from 'prop-types';
 import Axios from '../utils/axiosUrl';
@@ -12,15 +12,19 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import InfinityLoader from './InfinityLoader';
 import BarathonienFieldForm from './Form/BarathonienFieldForm';
-import { ModalContext } from './contexts/ModalContextProvider';
 import OwnerFieldForm from './Form/OwnerFieldForm';
 
-function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl, initialValues }) {
+function ModifyUserForm({
+    open,
+    onClose,
+    validationSchema,
+    updateUserUrl,
+    getUserByIdUrl,
+    initialValues,
+}) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
-
-    const { handleCloseModal } = useContext(ModalContext);
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -62,6 +66,7 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
             console.log(error);
         }
     }
+
     async function handleModify(values) {
         try {
             await Axios.api.post(`${updateUserUrl}`, values, {
@@ -72,7 +77,7 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
                 },
             });
             successToast();
-            handleCloseModal();
+            onClose();
         } catch (error) {
             if (error.response.data.message === 'validation.unique') {
                 errorUniqueEmailToast();
@@ -99,7 +104,7 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
     return (
         <>
             <Toaster />
-            <Dialog open={open} onClose={handleCloseModal} aria-labelledby="alert-dialog-title">
+            <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{"Modification de l'utilisateur"}</DialogTitle>
                 {loading ? (
                     <DialogContent>
@@ -115,7 +120,7 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
                     </DialogContent>
                 )}
                 <DialogActions>
-                    <Button onClick={handleCloseModal} variant="contained" color="error">
+                    <Button onClick={onClose} variant="contained" color="error">
                         Annuler
                     </Button>
                     <Button
@@ -135,6 +140,7 @@ function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl,
 ModifyUserForm.propTypes = {
     userId: PropTypes.number,
     open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func,
     validationSchema: PropTypes.object.isRequired,
     getUserByIdUrl: PropTypes.string.isRequired,
     updateUserUrl: PropTypes.string.isRequired,

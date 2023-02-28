@@ -6,13 +6,10 @@ import { Button } from '@mui/material';
 import Axios from '../../src/utils/axiosUrl';
 import PropTypes from 'prop-types';
 import { useAuth } from '../hooks/useAuth';
-import { useContext } from 'react';
-import ModalContext from '../components/contexts/ModalContextProvider';
 
 function ModalUpdateUser({ onClose, users, selectedUserId, deleteUrl, restoreUrl }) {
     const { user } = useAuth();
     const ApiToken = user.token;
-    const { handleCloseModal } = useContext(ModalContext);
 
     async function handleDelete() {
         try {
@@ -23,7 +20,8 @@ function ModalUpdateUser({ onClose, users, selectedUserId, deleteUrl, restoreUrl
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            handleCloseModal();
+            onClose();
+            console.log('bien supprimmer');
         } catch (error) {
             console.log(error);
         }
@@ -38,7 +36,8 @@ function ModalUpdateUser({ onClose, users, selectedUserId, deleteUrl, restoreUrl
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            handleCloseModal();
+            onClose();
+            console.log('bien restorer');
         } catch (error) {
             console.log(error);
         }
