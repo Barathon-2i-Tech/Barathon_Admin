@@ -13,6 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import InfinityLoader from './InfinityLoader';
 import BarathonienFieldForm from './Form/BarathonienFieldForm';
 import OwnerFieldForm from './Form/OwnerFieldForm';
+import CommonFormFields from './Form/CommonFormFields';
 
 function ModifyUserForm({
     open,
@@ -94,12 +95,15 @@ function ModifyUserForm({
         }
     }, [open]);
 
-    const content =
-        formik.values.barathonien_id !== null ? (
-            <BarathonienFieldForm formik={formik} />
-        ) : (
-            <OwnerFieldForm formik={formik} />
-        );
+    function formToDisplay() {
+        if (formik.values.barathonien_id) {
+            return <BarathonienFieldForm formik={formik} />;
+        }
+
+        if (formik.values.owner_id) {
+            return <OwnerFieldForm formik={formik} />;
+        }
+    }
 
     return (
         <>
@@ -114,7 +118,8 @@ function ModifyUserForm({
                     <DialogContent>
                         <form onSubmit={formik.handleSubmit}>
                             <Grid container spacing={2} sx={{ mt: 1 }}>
-                                {content}
+                                <CommonFormFields formik={formik} />
+                                {formToDisplay()}
                             </Grid>
                         </form>
                     </DialogContent>
