@@ -1,22 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import PropTypes from 'prop-types';
 import Axios from '../utils/axiosUrl';
 import { Button } from '@mui/material';
 import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import InfinityLoader from './InfinityLoader';
 import BarathonienFieldForm from './Form/BarathonienFieldForm';
+import { ModalContext } from './contexts/ModalContextProvider';
 
-function ModifyUserForm({ open, handleClose, validationSchema, handleModify, url, initialValues }) {
+function ModifyUserForm({ open, validationSchema, updateUserUrl, getUserByIdUrl, initialValues }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
+
+    const { handleCloseModal } = useContext(ModalContext);
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -25,9 +28,27 @@ function ModifyUserForm({ open, handleClose, validationSchema, handleModify, url
         onSubmit: (values) => handleModify(values),
     });
 
+    const successToast = () => {
+        toast.success('Mise à jour réussie', {
+            position: 'top-center',
+            style: {
+                padding: '16px',
+            },
+            icon: '👏',
+        });
+    };
+
+    const errorToast = () => {
+        toast.error('Nous avons rencontré un problème');
+    };
+
+    const errorUniqueEmailToast = () => {
+        toast.error("L'adresse email saisie n'est pas disponible");
+    };
+
     async function getUserById() {
         try {
-            const response = await Axios.api.get(`${url}`, {
+            const response = await Axios.api.get(`${getUserByIdUrl}`, {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
@@ -40,6 +61,27 @@ function ModifyUserForm({ open, handleClose, validationSchema, handleModify, url
             console.log(error);
         }
     }
+    async function handleModify(values) {
+        try {
+            await Axios.api.post(`${updateUserUrl}`, values, {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            successToast();
+            handleCloseModal();
+        } catch (error) {
+            if (error.response.data.message === 'validation.unique') {
+                errorUniqueEmailToast();
+            } else {
+                errorToast();
+                console.log(error);
+            }
+        }
+    }
+
     useEffect(() => {
         if (open) {
             getUserById();
@@ -49,7 +91,7 @@ function ModifyUserForm({ open, handleClose, validationSchema, handleModify, url
     return (
         <>
             <Toaster />
-            <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title">
+            <Dialog open={open} onClose={handleCloseModal} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{"Modification de l'utilisateur"}</DialogTitle>
                 {loading ? (
                     <DialogContent>
@@ -65,7 +107,7 @@ function ModifyUserForm({ open, handleClose, validationSchema, handleModify, url
                     </DialogContent>
                 )}
                 <DialogActions>
-                    <Button onClick={handleClose} variant="contained" color="error">
+                    <Button onClick={handleCloseModal} variant="contained" color="error">
                         Annuler
                     </Button>
                     <Button
@@ -85,10 +127,9 @@ function ModifyUserForm({ open, handleClose, validationSchema, handleModify, url
 ModifyUserForm.propTypes = {
     userId: PropTypes.number,
     open: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired,
     validationSchema: PropTypes.object.isRequired,
-    handleModify: PropTypes.func.isRequired,
-    url: PropTypes.string.isRequired,
+    getUserByIdUrl: PropTypes.string.isRequired,
+    updateUserUrl: PropTypes.string.isRequired,
     initialValues: PropTypes.object.isRequired,
 };
 
