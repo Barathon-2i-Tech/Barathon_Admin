@@ -35,6 +35,29 @@ function UserDatagrid() {
         setOpenOwner(false);
         setOpenOwnerForm(false);
     }
+
+    const rowCommonDeletedAt = {
+        field: 'deleted_at',
+        headerName: 'Actif',
+        flex: 0.3,
+        renderCell: ({ row: { deleted_at } }) => {
+            return (
+                <Box
+                    width="100%"
+                    m="0 auto"
+                    p="5px"
+                    display="flex"
+                    justifyContent="center"
+                    backgroundColor={deleted_at === null ? green[400] : red[400]}
+                    borderRadius="5px"
+                >
+                    {deleted_at === null && <HowToRegIcon />}
+                    {deleted_at !== null && <PersonRemoveIcon />}
+                </Box>
+            );
+        },
+    };
+
     /****************** barathonien ************************** */
     async function getBarathoniens() {
         try {
@@ -113,27 +136,7 @@ function UserDatagrid() {
         { field: 'address', headerName: 'Adresse', flex: 0.7 },
         { field: 'postal_code', headerName: 'Code postal', flex: 0.4 },
         { field: 'city', headerName: 'Ville', flex: 0.4 },
-        {
-            field: 'deleted_at',
-            headerName: 'Actif',
-            flex: 0.3,
-            renderCell: ({ row: { deleted_at } }) => {
-                return (
-                    <Box
-                        width="100%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={deleted_at === null ? green[400] : red[400]}
-                        borderRadius="5px"
-                    >
-                        {deleted_at === null && <HowToRegIcon />}
-                        {deleted_at !== null && <PersonRemoveIcon />}
-                    </Box>
-                );
-            },
-        },
+        rowCommonDeletedAt,
         {
             field: 'action',
             headerName: 'Action',
@@ -278,27 +281,7 @@ function UserDatagrid() {
                 );
             },
         },
-        {
-            field: 'deleted_at',
-            headerName: 'Actif',
-            flex: 0.2,
-            renderCell: ({ row: { deleted_at } }) => {
-                return (
-                    <Box
-                        width="100%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={deleted_at === null ? green[400] : red[400]}
-                        borderRadius="5px"
-                    >
-                        {deleted_at === null && <HowToRegIcon />}
-                        {deleted_at !== null && <PersonRemoveIcon />}
-                    </Box>
-                );
-            },
-        },
+        rowCommonDeletedAt,
         {
             field: 'action',
             headerName: 'Action',
