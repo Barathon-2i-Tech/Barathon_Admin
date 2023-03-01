@@ -8,6 +8,8 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
 import { green, red, orange, grey } from '@mui/material/colors';
 import HeaderDatagrid from './HeaderDatagrid';
@@ -21,18 +23,27 @@ function UserDatagrid() {
 
     const [allBarathoniens, setAllBarathoniens] = useState([]);
     const [allOwners, setAllOwners] = useState([]);
+    const [allAdministrators, setAllAdministrators] = useState([]);
+
     const [selectedBarathonienId, setSelectedBarathonienId] = useState(null);
     const [selectedOwnerId, setSelectedOwnerId] = useState(null);
+    const [selectedAdministratorId, setSelectedAdministratorId] = useState(null);
+
     const [openBarathonien, setOpenBarathonien] = useState(false);
     const [openOwner, setOpenOwner] = useState(false);
+    const [openAdministrator, setOpenAdministrator] = useState(false);
+
     const [openBarathonienForm, setOpenBarathonienForm] = useState(false);
     const [openOwnerForm, setOpenOwnerForm] = useState(false);
+    const [openAdministratorForm, setOpenAdministratorForm] = useState(false);
 
     function handleClose() {
         setOpenBarathonien(false);
         setOpenBarathonienForm(false);
         setOpenOwner(false);
         setOpenOwnerForm(false);
+        setOpenAdministrator(false);
+        setOpenAdministratorForm(false);
     }
 
     const rowCommonDeletedAt = {
@@ -59,7 +70,11 @@ function UserDatagrid() {
         },
     };
 
-    /****************** barathonien ************************** */
+    /*********************************************
+    |
+    |      Barathoniens
+    |
+    **********************************************/
     async function getBarathoniens() {
         try {
             const response = await Axios.api.get('/barathonien/list', {
@@ -101,16 +116,6 @@ function UserDatagrid() {
     const handleClickOpenBarathonienForm = (id) => {
         setSelectedBarathonienId(id);
         setOpenBarathonienForm(true);
-    };
-
-    const handleClickOpenOwner = (id) => {
-        setSelectedOwnerId(id);
-        setOpenOwner(true);
-    };
-
-    const handleClickOpenOwnerForm = (id) => {
-        setSelectedOwnerId(id);
-        setOpenOwnerForm(true);
     };
 
     const barathoniensRows = allBarathoniens.map((barathonien) => ({
@@ -208,7 +213,12 @@ function UserDatagrid() {
         },
     ];
 
-    /************ owners  */
+    /*********************************************
+    |
+    |      Owners
+    |
+    **********************************************/
+
     async function getOwners() {
         try {
             const response = await Axios.api.get('/pro/list', {
@@ -229,6 +239,16 @@ function UserDatagrid() {
         last_name: '',
         email: '',
         phone: '',
+    };
+
+    const handleClickOpenOwner = (id) => {
+        setSelectedOwnerId(id);
+        setOpenOwner(true);
+    };
+
+    const handleClickOpenOwnerForm = (id) => {
+        setSelectedOwnerId(id);
+        setOpenOwnerForm(true);
     };
 
     function getStatus(params) {
@@ -376,10 +396,146 @@ function UserDatagrid() {
         phone: Yup.string().max(13, 'Le numéro saisie est invalide').nullable(),
     });
 
+    /*********************************************
+    |
+    |      Admnistrators
+    |
+    **********************************************/
+
+    async function getAdmnistrators() {
+        try {
+            const response = await Axios.api.get('/administrator/list', {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            setAllAdministrators(response.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const admnistratorInitialValues = {
+        first_name: '',
+        last_name: '',
+        email: '',
+        superAdmin: '',
+    };
+
+    const handleClickOpenAdmnistrator = (id) => {
+        setSelectedAdministratorId(id);
+        setOpenAdministrator(true);
+    };
+
+    const handleClickOpenAdmnistratorForm = (id) => {
+        setSelectedAdministratorId(id);
+        setOpenAdministratorForm(true);
+    };
+
+    const administratorsRows = allAdministrators.map((administrator) => ({
+        key: administrator.user_id,
+        id: administrator.user_id,
+        first_name: administrator.first_name,
+        last_name: administrator.last_name,
+        email: administrator.email,
+        administrator_id: administrator.administrator_id,
+        superAdmin: administrator.superAdmin,
+        deleted_at: administrator.deleted_at,
+    }));
+
+    const administratorsColumns = [
+        { field: 'id', headerName: 'ID', flex: 0.1, headerAlign: 'center', align: 'center' },
+        {
+            field: 'fullname',
+            headerName: 'Nom complet',
+            flex: 0.7,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: getFullName,
+        },
+        { field: 'email', headerName: 'Email', flex: 0.4, headerAlign: 'center', align: 'center' },
+        {
+            field: 'superAdmin',
+            headerName: 'Super Admnistrateur',
+            flex: 0.4,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: ({ row: { superAdmin } }) => {
+                return (
+                    <Box
+                        width="100%"
+                        m="0 auto"
+                        p="5px"
+                        display="flex"
+                        justifyContent="center"
+                        backgroundColor={superAdmin === true ? green[400] : red[400]}
+                        borderRadius="5px"
+                    >
+                        {superAdmin === true && <DoneIcon />}
+                        {superAdmin === false && <DoNotDisturbIcon />}
+                    </Box>
+                );
+            },
+        },
+        rowCommonDeletedAt,
+        {
+            field: 'action',
+            headerName: 'Action',
+            flex: 0.7,
+            disableClickEventBubbling: true,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: (params) => (
+                <>
+                    <Button
+                        sx={{ marginRight: '10px', px: '20px' }}
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => {
+                            handleClickOpenAdmnistratorForm(params.row.id);
+                        }}
+                        startIcon={<EditIcon />}
+                    >
+                        Modifier
+                    </Button>
+                    <Button
+                        sx={{ px: '20px' }}
+                        variant="contained"
+                        color={params.row.deleted_at === null ? 'error' : 'warning'}
+                        size="small"
+                        onClick={() => {
+                            handleClickOpenAdmnistrator(params.row.id);
+                        }}
+                        startIcon={
+                            params.row.deleted_at === null ? (
+                                <DeleteIcon />
+                            ) : (
+                                <RestoreFromTrashIcon />
+                            )
+                        }
+                    >
+                        {params.row.deleted_at === null ? 'Supprimer' : 'Restaurer'}
+                    </Button>
+                </>
+            ),
+        },
+    ];
+
     useEffect(() => {
         getBarathoniens();
         getOwners();
-    }, [openBarathonien, openOwner, openBarathonienForm, openOwnerForm]);
+        getAdmnistrators();
+    }, [
+        openBarathonien,
+        openOwner,
+        openBarathonienForm,
+        openOwnerForm,
+        openAdministrator,
+        openAdministratorForm,
+    ]);
 
     return (
         <>
@@ -406,7 +562,6 @@ function UserDatagrid() {
                         restoreUrl={`/barathonien/restore/${selectedBarathonienId}`}
                     />
                 </Dialog>
-
                 <ModifyUserForm
                     open={openBarathonienForm}
                     onClose={handleClose}
@@ -439,7 +594,6 @@ function UserDatagrid() {
                         restoreUrl={`/pro/restore/${selectedOwnerId}`}
                     />
                 </Dialog>
-
                 <ModifyUserForm
                     open={openOwnerForm}
                     onClose={handleClose}
@@ -447,6 +601,39 @@ function UserDatagrid() {
                     getUserByIdUrl={`/pro/${selectedOwnerId}`}
                     updateUserUrl={`/pro/update/${selectedOwnerId}`}
                     initialValues={ownerInitialValues}
+                />
+            </div>
+            <div style={{ marginTop: '100px' }}>
+                <Box sx={{ height: 400, width: '100%' }}>
+                    <HeaderDatagrid title="Admnistrateurs" />
+                    <DataGrid
+                        rows={administratorsRows}
+                        columns={administratorsColumns}
+                        components={{ Toolbar: GridToolbar }}
+                    />
+                </Box>
+                <Dialog
+                    open={openOwner}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <ModalUpdateUser
+                        users={allAdministrators}
+                        selectedUserId={selectedAdministratorId}
+                        onClose={handleClose}
+                        deleteUrl={`/pro/delete/${selectedAdministratorId}`}
+                        restoreUrl={`/pro/restore/${selectedAdministratorId}`}
+                    />
+                </Dialog>
+
+                <ModifyUserForm
+                    open={openAdministratorForm}
+                    onClose={handleClose}
+                    validationSchema={validationSchemaOwner}
+                    getUserByIdUrl={`/pro/${selectedAdministratorId}`}
+                    updateUserUrl={`/pro/update/${selectedAdministratorId}`}
+                    initialValues={admnistratorInitialValues}
                 />
             </div>
         </>
