@@ -498,6 +498,9 @@ function UserDatagrid() {
                             handleClickOpenAdmnistratorForm(params.row.id);
                         }}
                         startIcon={<EditIcon />}
+                        disabled={
+                            params.row.deleted_at !== null 
+                        }
                     >
                         Modifier
                     </Button>
@@ -515,6 +518,9 @@ function UserDatagrid() {
                             ) : (
                                 <RestoreFromTrashIcon />
                             )
+                        }
+                        disabled={
+                            params.row.email === user.userLogged.email
                         }
                     >
                         {params.row.deleted_at === null ? 'Supprimer' : 'Restaurer'}
@@ -605,7 +611,7 @@ function UserDatagrid() {
             </div>
             <div style={{ marginTop: '100px' }}>
                 <Box sx={{ height: 400, width: '100%' }}>
-                    <HeaderDatagrid title="Admnistrateurs" />
+                    <HeaderDatagrid title="Administrateurs" />
                     <DataGrid
                         rows={administratorsRows}
                         columns={administratorsColumns}
@@ -613,7 +619,7 @@ function UserDatagrid() {
                     />
                 </Box>
                 <Dialog
-                    open={openOwner}
+                    open={openAdministrator}
                     onClose={handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
@@ -622,8 +628,8 @@ function UserDatagrid() {
                         users={allAdministrators}
                         selectedUserId={selectedAdministratorId}
                         onClose={handleClose}
-                        deleteUrl={`/pro/delete/${selectedAdministratorId}`}
-                        restoreUrl={`/pro/restore/${selectedAdministratorId}`}
+                        deleteUrl={`/administrator/delete/${selectedAdministratorId}`}
+                        restoreUrl={`/administrator/restore/${selectedAdministratorId}`}
                     />
                 </Dialog>
 
@@ -631,8 +637,8 @@ function UserDatagrid() {
                     open={openAdministratorForm}
                     onClose={handleClose}
                     validationSchema={validationSchemaOwner}
-                    getUserByIdUrl={`/pro/${selectedAdministratorId}`}
-                    updateUserUrl={`/pro/update/${selectedAdministratorId}`}
+                    getUserByIdUrl={`/administrator/${selectedAdministratorId}`}
+                    updateUserUrl={`/administrator/update/${selectedAdministratorId}`}
                     initialValues={admnistratorInitialValues}
                 />
             </div>
