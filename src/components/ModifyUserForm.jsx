@@ -14,6 +14,7 @@ import InfinityLoader from './InfinityLoader';
 import BarathonienFieldForm from './Form/BarathonienFieldForm';
 import OwnerFieldForm from './Form/OwnerFieldForm';
 import CommonFormFields from './Form/CommonFormFields';
+import AdministratorFieldForm from './Form/AdministratorFieldForm';
 
 function ModifyUserForm({
     open,
@@ -102,6 +103,10 @@ function ModifyUserForm({
 
         if (formik.values.owner_id) {
             return <OwnerFieldForm formik={formik} />;
+        }
+
+        if (formik.values.administrator_id) {
+            return <AdministratorFieldForm formik={formik} />;
         }
     }
 

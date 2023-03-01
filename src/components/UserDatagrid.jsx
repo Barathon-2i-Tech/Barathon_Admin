@@ -234,6 +234,12 @@ function UserDatagrid() {
         }
     }
 
+    const validationSchemaAdministrator = Yup.object({
+        first_name: Yup.string().required('Requis'),
+        last_name: Yup.string().required('Requis'),
+        email: Yup.string().email('Email invalide').required('Requis'),
+        superAdmin: Yup.boolean().required('Requis'),
+    });
     const ownerInitialValues = {
         first_name: '',
         last_name: '',
@@ -498,9 +504,7 @@ function UserDatagrid() {
                             handleClickOpenAdmnistratorForm(params.row.id);
                         }}
                         startIcon={<EditIcon />}
-                        disabled={
-                            params.row.deleted_at !== null 
-                        }
+                        disabled={params.row.deleted_at !== null}
                     >
                         Modifier
                     </Button>
@@ -519,9 +523,7 @@ function UserDatagrid() {
                                 <RestoreFromTrashIcon />
                             )
                         }
-                        disabled={
-                            params.row.email === user.userLogged.email
-                        }
+                        disabled={params.row.email === user.userLogged.email}
                     >
                         {params.row.deleted_at === null ? 'Supprimer' : 'Restaurer'}
                     </Button>
@@ -636,7 +638,7 @@ function UserDatagrid() {
                 <ModifyUserForm
                     open={openAdministratorForm}
                     onClose={handleClose}
-                    validationSchema={validationSchemaOwner}
+                    validationSchema={validationSchemaAdministrator}
                     getUserByIdUrl={`/administrator/${selectedAdministratorId}`}
                     updateUserUrl={`/administrator/update/${selectedAdministratorId}`}
                     initialValues={admnistratorInitialValues}
