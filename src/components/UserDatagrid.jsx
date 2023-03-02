@@ -16,6 +16,7 @@ import HeaderDatagrid from './HeaderDatagrid';
 import * as Yup from 'yup';
 import ModifyUserForm from './ModifyUserForm';
 import ModalUpdateUser from './ModalUpdateUser';
+import OwnerValidationForm from './Form/OwnerValidationForm';
 
 function UserDatagrid() {
     const { user } = useAuth();
@@ -28,6 +29,9 @@ function UserDatagrid() {
     const [selectedBarathonienId, setSelectedBarathonienId] = useState(null);
     const [selectedOwnerId, setSelectedOwnerId] = useState(null);
     const [selectedAdministratorId, setSelectedAdministratorId] = useState(null);
+
+    const [selectedOwner, setSelectedOwner] = useState(null);
+    const [openOwnerFormValidation, setOpenOwnerFormValidation] = useState(false);
 
     const [openBarathonien, setOpenBarathonien] = useState(false);
     const [openOwner, setOpenOwner] = useState(false);
@@ -44,6 +48,7 @@ function UserDatagrid() {
         setOpenOwnerForm(false);
         setOpenAdministrator(false);
         setOpenAdministratorForm(false);
+        setOpenOwnerFormValidation(false);
     }
 
     const rowCommonDeletedAt = {
@@ -257,6 +262,11 @@ function UserDatagrid() {
         setOpenOwnerForm(true);
     };
 
+    const handleCLickOpenOwnerVerification = (data) => {
+        setSelectedOwner(data);
+        setOpenOwnerFormValidation(true);
+    };
+
     function getStatus(params) {
         switch (params.row.status.code) {
             case 'OWNER_VALID':
@@ -350,12 +360,28 @@ function UserDatagrid() {
         {
             field: 'action',
             headerName: 'Action',
-            flex: 0.7,
+            flex: 1,
             disableClickEventBubbling: true,
             headerAlign: 'center',
             align: 'center',
             renderCell: (params) => (
                 <>
+                    <Button
+                        sx={{ marginRight: '10px', px: '20px' }}
+                        variant="contained"
+                        color="info"
+                        size="small"
+                        onClick={() => {
+                            handleCLickOpenOwnerVerification(params.row);
+                        }}
+                        startIcon={<EditIcon />}
+                        disabled={
+                            params.row.deleted_at !== null ||
+                            params.row.status.code === 'OWNER_VALID'
+                        }
+                    >
+                        Validation
+                    </Button>
                     <Button
                         sx={{ marginRight: '10px', px: '20px' }}
                         variant="contained"
@@ -609,6 +635,11 @@ function UserDatagrid() {
                     getUserByIdUrl={`/pro/${selectedOwnerId}`}
                     updateUserUrl={`/pro/update/${selectedOwnerId}`}
                     initialValues={ownerInitialValues}
+                />
+                <OwnerValidationForm
+                    open={openOwnerFormValidation}
+                    selectedOwner={selectedOwner}
+                    onClose={handleClose}
                 />
             </div>
             <div style={{ marginTop: '100px' }}>
