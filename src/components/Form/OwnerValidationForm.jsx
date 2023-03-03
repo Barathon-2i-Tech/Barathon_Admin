@@ -5,13 +5,18 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import InfinityLoader from '../InfinityLoader';
 import Axios from '../../utils/axiosUrl';
 import { useAuth } from '../../hooks/useAuth';
 import PropTypes from 'prop-types';
-
-import ValidationField from './ValidationField';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ListSubheader from '@mui/material/ListSubheader';
 
 function OwnerValidationForm({ open, selectedOwner, onClose }) {
     console.log(selectedOwner);
@@ -34,8 +39,15 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             setLoading(false);
         } catch (error) {
             console.log(error);
+            setLoading(false);
         }
     }
+
+    const handleSearch = (event) => {
+        event.preventDefault();
+        const searchUrl = `https://www.societe.com/cgi-bin/search?champs=${selectedOwner.siren}`;
+        window.open(searchUrl, '_blank');
+    };
 
     function handleValidate() {
         console.log('validate');
@@ -57,50 +69,95 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 ) : (
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            <div>
-                                Données utilisateur :
-                                <Grid container spacing={2} sx={{ mt: 1 }}>
-                                    <ValidationField
-                                        gridItem={6}
-                                        label="Nom"
-                                        value={selectedOwner.last_name}
+                            <List
+                                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                                component="nav"
+                                aria-labelledby="nested-list-subheader"
+                                subheader={
+                                    <ListSubheader component="div" id="nested-list-subheader">
+                                        Données saisie par l&apos;utilisateur
+                                    </ListSubheader>
+                                }
+                            >
+                                <ListItem disablePadding>
+                                    <ListItemIcon>
+                                        <ChevronRightIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={`Nom : ${selectedOwner.last_name}`} />
+                                </ListItem>
+                                <ListItem disablePadding>
+                                    <ListItemIcon>
+                                        <ChevronRightIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={`Prénom : ${selectedOwner.first_name}`}
                                     />
-                                    <ValidationField
-                                        gridItem={6}
-                                        label="Prenom"
-                                        value={selectedOwner.first_name}
-                                    />
-                                    <ValidationField
-                                        gridItem={6}
-                                        label="Siren"
-                                        value={selectedOwner.siren}
-                                    />
-                                </Grid>
-                            </div>
-                            <div>
-                                {/* Données provenant de l`&apos;`API SIRENE: */}
-                                <Grid container spacing={2} sx={{ mt: 1 }}>
-                                    <ValidationField
-                                        gridItem={6}
-                                        label="Nom unité legale"
-                                        value={
-                                            dataFromApi.periodesUniteLegale[0]
-                                                .denominationUniteLegale
+                                </ListItem>
+                                <ListItem disablePadding>
+                                    <ListItemIcon>
+                                        <ChevronRightIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={`Siren: : ${selectedOwner.siren}`} />
+                                </ListItem>
+                            </List>
+
+                            {loading === false && Object.keys(dataFromApi).length === 0 ? (
+                                <Typography variant="overline" color="error">
+                                    Siren non trouvé
+                                </Typography>
+                            ) : (
+                                <>
+                                    <List
+                                        sx={{
+                                            width: '100%',
+                                            maxWidth: 360,
+                                            bgcolor: 'background.paper',
+                                        }}
+                                        component="nav"
+                                        aria-labelledby="nested-list-subheader"
+                                        subheader={
+                                            <ListSubheader
+                                                component="div"
+                                                id="nested-list-subheader"
+                                            >
+                                                Données provenant de l&apos;INSEE
+                                            </ListSubheader>
                                         }
-                                    />
-                                    <ValidationField
-                                        gridItem={6}
-                                        label="Siren"
-                                        value={dataFromApi.siren}
-                                    />
-                                </Grid>
-                            </div>
+                                    >
+                                        <ListItem disablePadding>
+                                            <ListItemIcon>
+                                                <ChevronRightIcon />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={`Nom : ${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
+                                            />
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemIcon>
+                                                <ChevronRightIcon />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={`Siren : ${dataFromApi.siren}`}
+                                            />
+                                        </ListItem>
+                                    </List>
+                                </>
+                            )}
+                            <Divider sx={{ mt: 2 }} />
+                            <Button variant="contained" onClick={handleSearch}>
+                                Rechercher le siren {selectedOwner.siren} sur Societe.com
+                            </Button>
                         </DialogContentText>
                     </DialogContent>
                 )}
                 <DialogActions>
                     <Button onClick={onClose}>Annuler</Button>
-                    <Button onClick={() => handleValidate()}>Supprimer</Button>
+                    <Button
+                        disabled={Object.keys(dataFromApi).length === 0}
+                        onClick={() => handleValidate()}
+                    >
+                        Valider
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
