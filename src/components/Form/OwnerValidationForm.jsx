@@ -2,21 +2,16 @@ import { useEffect, useState } from 'react';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import InfinityLoader from '../InfinityLoader';
 import Axios from '../../utils/axiosUrl';
 import { useAuth } from '../../hooks/useAuth';
 import PropTypes from 'prop-types';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListSubheader from '@mui/material/ListSubheader';
+import ListValidationField from './ListValidationField';
 
 function OwnerValidationForm({ open, selectedOwner, onClose }) {
     console.log(selectedOwner);
@@ -34,7 +29,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            console.log(response.data.data);
             setDataFromApi(response.data.data);
             setLoading(false);
         } catch (error) {
@@ -68,86 +62,64 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     </DialogContent>
                 ) : (
                     <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            <List
-                                sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-                                component="nav"
-                                aria-labelledby="nested-list-subheader"
-                                subheader={
-                                    <ListSubheader component="div" id="nested-list-subheader">
-                                        Données saisie par l&apos;utilisateur
-                                    </ListSubheader>
-                                }
-                            >
-                                <ListItem disablePadding>
-                                    <ListItemIcon>
-                                        <ChevronRightIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={`Nom : ${selectedOwner.last_name}`} />
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <ListItemIcon>
-                                        <ChevronRightIcon />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={`Prénom : ${selectedOwner.first_name}`}
-                                    />
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <ListItemIcon>
-                                        <ChevronRightIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={`Siren: : ${selectedOwner.siren}`} />
-                                </ListItem>
-                            </List>
+                        <List
+                            sx={{ width: '100%', maxWidth: 360 }}
+                            component="div"
+                            aria-labelledby="nested-list-subheader"
+                            subheader={
+                                <ListSubheader
+                                    component="div"
+                                    id="nested-list-subheader"
+                                    color="primary"
+                                    sx={{ fontWeight: 'bold' }}
+                                >
+                                    Données saisie par l&apos;utilisateur
+                                </ListSubheader>
+                            }
+                        >
+                            <ListValidationField label="Nom" value={selectedOwner.last_name} />
+                            <ListValidationField label="Prénom" value={selectedOwner.first_name} />
+                            <ListValidationField label="Siren" value={selectedOwner.siren} />
+                        </List>
 
-                            {loading === false && Object.keys(dataFromApi).length === 0 ? (
-                                <Typography variant="overline" color="error">
-                                    Siren non trouvé
-                                </Typography>
-                            ) : (
-                                <>
-                                    <List
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: 360,
-                                            bgcolor: 'background.paper',
-                                        }}
-                                        component="nav"
-                                        aria-labelledby="nested-list-subheader"
-                                        subheader={
-                                            <ListSubheader
-                                                component="div"
-                                                id="nested-list-subheader"
-                                            >
-                                                Données provenant de l&apos;INSEE
-                                            </ListSubheader>
-                                        }
-                                    >
-                                        <ListItem disablePadding>
-                                            <ListItemIcon>
-                                                <ChevronRightIcon />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`Nom : ${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
-                                            />
-                                        </ListItem>
-                                        <ListItem disablePadding>
-                                            <ListItemIcon>
-                                                <ChevronRightIcon />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                primary={`Siren : ${dataFromApi.siren}`}
-                                            />
-                                        </ListItem>
-                                    </List>
-                                </>
-                            )}
-                            <Divider sx={{ mt: 2 }} />
-                            <Button variant="contained" onClick={handleSearch}>
-                                Rechercher le siren {selectedOwner.siren} sur Societe.com
-                            </Button>
-                        </DialogContentText>
+                        {loading === false && Object.keys(dataFromApi).length !== 0 ? (
+                            <div>
+                                <List
+                                    sx={{
+                                        width: '100%',
+                                        maxWidth: 360,
+                                    }}
+                                    component="div"
+                                    aria-labelledby="nested-list-subheader"
+                                    subheader={
+                                        <ListSubheader
+                                            component="div"
+                                            id="nested-list-subheader"
+                                            color="primary"
+                                            sx={{ fontWeight: 'bold' }}
+                                        >
+                                            Données provenant de l&apos;INSEE
+                                        </ListSubheader>
+                                    }
+                                >
+                                    <ListValidationField
+                                        label="Dénomination legal"
+                                        value={`${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
+                                    />
+                                    <ListValidationField
+                                        label="Siren"
+                                        value={`${dataFromApi.siren}`}
+                                    />
+                                </List>
+                            </div>
+                        ) : (
+                            <Typography variant="overline" color="error">
+                                Siren non trouvé
+                            </Typography>
+                        )}
+                        <Button variant="contained" onClick={handleSearch}>
+                            Rechercher le siren {selectedOwner.siren} sur Societe.com
+                        </Button>
                     </DialogContent>
                 )}
                 <DialogActions>
