@@ -54,7 +54,7 @@ function UserDatagrid() {
     const rowCommonDeletedAt = {
         field: 'deleted_at',
         headerName: 'Actif',
-        flex: 0.3,
+        flex: 0.2,
         headerAlign: 'center',
         align: 'center',
         renderCell: ({ row: { deleted_at } }) => {
@@ -239,12 +239,13 @@ function UserDatagrid() {
         }
     }
 
-    const validationSchemaAdministrator = Yup.object({
+    const validationSchemaOwner = Yup.object({
         first_name: Yup.string().required('Requis'),
         last_name: Yup.string().required('Requis'),
         email: Yup.string().email('Email invalide').required('Requis'),
-        superAdmin: Yup.boolean().required('Requis'),
+        phone: Yup.string().max(13, 'Le numéro saisie est invalide').nullable(),
     });
+
     const ownerInitialValues = {
         first_name: '',
         last_name: '',
@@ -293,6 +294,7 @@ function UserDatagrid() {
         siren: owner.siren,
         kbis: owner.kbis,
         phone: owner.phone,
+        company_name: owner.company_name,
         status: JSON.parse(owner.comment),
         deleted_at: owner.deleted_at,
     }));
@@ -302,13 +304,20 @@ function UserDatagrid() {
         {
             field: 'fullname',
             headerName: 'Nom complet',
-            flex: 0.7,
+            flex: 0.5,
             headerAlign: 'center',
             align: 'center',
             valueGetter: getFullName,
         },
+        {
+            field: 'company_name',
+            headerName: 'Raison sociale',
+            flex: 0.7,
+            headerAlign: 'center',
+            align: 'center',
+        },
         { field: 'email', headerName: 'Email', flex: 0.4, headerAlign: 'center', align: 'center' },
-        { field: 'siren', headerName: 'Siren', flex: 0.4, headerAlign: 'center', align: 'center' },
+        { field: 'siren', headerName: 'Siren', flex: 0.3, headerAlign: 'center', align: 'center' },
         { field: 'kbis', headerName: 'Kbis', flex: 0.4, headerAlign: 'center', align: 'center' },
         {
             field: 'phone',
@@ -321,7 +330,7 @@ function UserDatagrid() {
         {
             field: 'status',
             headerName: 'Status',
-            flex: 0.4,
+            flex: 0.3,
             headerAlign: 'center',
             align: 'center',
             valueGetter: getStatus,
@@ -367,23 +376,23 @@ function UserDatagrid() {
             renderCell: (params) => (
                 <>
                     <Button
-                        sx={{ marginRight: '10px', px: '20px' }}
+                        sx={{ marginRight: '10px', px: '40px' }}
                         variant="contained"
                         color="info"
                         size="small"
                         onClick={() => {
                             handleCLickOpenOwnerVerification(params.row);
                         }}
-                        startIcon={<EditIcon />}
+                        startIcon={<DoneIcon />}
                         disabled={
                             params.row.deleted_at !== null ||
                             params.row.status.code === 'OWNER_VALID'
                         }
                     >
-                        Validation
+                        Valider
                     </Button>
                     <Button
-                        sx={{ marginRight: '10px', px: '20px' }}
+                        sx={{ marginRight: '10px', px: '40px' }}
                         variant="contained"
                         color="primary"
                         size="small"
@@ -399,7 +408,7 @@ function UserDatagrid() {
                         Modifier
                     </Button>
                     <Button
-                        sx={{ px: '20px' }}
+                        sx={{ px: '45px' }}
                         variant="contained"
                         color={params.row.deleted_at === null ? 'error' : 'warning'}
                         size="small"
@@ -421,13 +430,6 @@ function UserDatagrid() {
         },
     ];
 
-    const validationSchemaOwner = Yup.object({
-        first_name: Yup.string().required('Requis'),
-        last_name: Yup.string().required('Requis'),
-        email: Yup.string().email('Email invalide').required('Requis'),
-        phone: Yup.string().max(13, 'Le numéro saisie est invalide').nullable(),
-    });
-
     /*********************************************
     |
     |      Admnistrators
@@ -448,6 +450,13 @@ function UserDatagrid() {
             console.log(error);
         }
     }
+
+    const validationSchemaAdministrator = Yup.object({
+        first_name: Yup.string().required('Requis'),
+        last_name: Yup.string().required('Requis'),
+        email: Yup.string().email('Email invalide').required('Requis'),
+        superAdmin: Yup.boolean().required('Requis'),
+    });
 
     const admnistratorInitialValues = {
         first_name: '',

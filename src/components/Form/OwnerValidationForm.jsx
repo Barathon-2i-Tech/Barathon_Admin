@@ -173,6 +173,10 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                             <ListValidationField label="Nom" value={selectedOwner.last_name} />
                             <ListValidationField label="Prénom" value={selectedOwner.first_name} />
                             <ListValidationField label="Siren" value={selectedOwner.siren} />
+                            <ListValidationField
+                                label="Raison sociale"
+                                value={selectedOwner.company_name}
+                            />
                         </List>
 
                         {loading === false && Object.keys(dataFromApi).length !== 0 ? (
