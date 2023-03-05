@@ -37,6 +37,98 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         }
     }
 
+    function usualDenomination() {
+        const { periodesUniteLegale } = dataFromApi;
+        const {
+            denominationUsuelle1UniteLegale,
+            denominationUsuelleEtablissement,
+            denominationUsuelle2UniteLegale,
+            denominationUsuelle3UniteLegale,
+        } = periodesUniteLegale[0];
+
+        if (!denominationUsuelle1UniteLegale && !denominationUsuelleEtablissement) {
+            return null;
+        }
+
+        return (
+            <>
+                {denominationUsuelleEtablissement && (
+                    <ListValidationField
+                        label="Nom commercial"
+                        value={`${denominationUsuelleEtablissement}`}
+                    />
+                )}
+                {denominationUsuelle1UniteLegale && (
+                    <ListValidationField
+                        label="Nom commercial"
+                        value={`${denominationUsuelle1UniteLegale}`}
+                    />
+                )}
+                {denominationUsuelle2UniteLegale && (
+                    <ListValidationField
+                        label="Nom commercial (2eme ligne)"
+                        value={`${denominationUsuelle2UniteLegale}`}
+                    />
+                )}
+                {denominationUsuelle3UniteLegale && (
+                    <ListValidationField
+                        label="Nom commercial (3eme ligne)"
+                        value={`${denominationUsuelle3UniteLegale}`}
+                    />
+                )}
+            </>
+        );
+    }
+
+    function dataToDisplay() {
+        if (dataFromApi.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C') {
+            return (
+                <Typography variant="overline" color="error">
+                    Entreprise administrativement fermée
+                </Typography>
+            );
+        }
+
+        // personne morale
+        if (dataFromApi.periodesUniteLegale[0].denominationUniteLegale !== null) {
+            return (
+                <>
+                    <Typography variant="overline" sx={{ color: 'green' }}>
+                        Personne morale trouvée
+                    </Typography>
+                    <ListValidationField label="Siren" value={`${dataFromApi.siren}`} />
+                    <ListValidationField
+                        label="Raison sociale"
+                        value={`${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
+                    />
+                    {usualDenomination()}
+                    <ListValidationField
+                        label="Sigle"
+                        value={`${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
+                    />
+                </>
+            );
+        }
+        //personne physique
+        return (
+            <>
+                <Typography variant="overline" sx={{ color: 'green' }}>
+                    Personne physique trouvée
+                </Typography>
+                <ListValidationField label="Siren" value={`${dataFromApi.siren}`} />
+                {usualDenomination()}
+                <ListValidationField
+                    label="Nom"
+                    value={`${dataFromApi.periodesUniteLegale[0].nomUniteLegale}`}
+                />
+                <ListValidationField
+                    label="Prénom"
+                    value={`${dataFromApi.prenomUsuelUniteLegale}`}
+                />
+            </>
+        );
+    }
+
     const handleSearch = (event) => {
         event.preventDefault();
         const searchUrl = `https://www.societe.com/cgi-bin/search?champs=${selectedOwner.siren}`;
@@ -52,6 +144,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             getDataFromSirenApi();
         }
     }, [open]);
+
     return (
         <>
             <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title">
@@ -63,7 +156,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 ) : (
                     <DialogContent>
                         <List
-                            sx={{ width: '100%', maxWidth: 360 }}
+                            sx={{ width: '100%', maxWidth: 800 }}
                             component="div"
                             aria-labelledby="nested-list-subheader"
                             subheader={
@@ -87,7 +180,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                                 <List
                                     sx={{
                                         width: '100%',
-                                        maxWidth: 360,
+                                        maxWidth: 800,
                                     }}
                                     component="div"
                                     aria-labelledby="nested-list-subheader"
@@ -102,14 +195,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                                         </ListSubheader>
                                     }
                                 >
-                                    <ListValidationField
-                                        label="Dénomination legal"
-                                        value={`${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
-                                    />
-                                    <ListValidationField
-                                        label="Siren"
-                                        value={`${dataFromApi.siren}`}
-                                    />
+                                    {dataToDisplay()}
                                 </List>
                             </div>
                         ) : (
@@ -118,7 +204,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                             </Typography>
                         )}
                         <Button variant="contained" onClick={handleSearch}>
-                            Rechercher le siren {selectedOwner.siren} sur Societe.com
+                            Plus d&lsquo;informations sur Societe.com
                         </Button>
                     </DialogContent>
                 )}
