@@ -54,15 +54,19 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         }
     }
 
-    function handleValidate(validationStatus) {
+    async function handleValidate(validationStatus) {
         try {
             console.log('api token' + ApiToken);
-            Axios.api.put(`/pro/${selectedOwner.owner_id}/validation/${validationStatus}`, {
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${ApiToken}`,
+            await Axios.api.put(
+                `/pro/${selectedOwner.owner_id}/validation/${validationStatus}`,
+                null,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${ApiToken}`,
+                    },
                 },
-            });
+            );
             onClose();
         } catch (error) {
             console.log(error);
