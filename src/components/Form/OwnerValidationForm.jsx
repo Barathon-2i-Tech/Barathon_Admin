@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import Axios from '../../utils/axiosUrl';
+import { useAuth } from '../../hooks/useAuth';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -6,13 +8,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import InfinityLoader from '../InfinityLoader';
-import Axios from '../../utils/axiosUrl';
-import { useAuth } from '../../hooks/useAuth';
-import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListValidationField from './ListValidationField';
+import toast, { Toaster } from 'react-hot-toast';
+import PropTypes from 'prop-types';
 
 function OwnerValidationForm({ open, selectedOwner, onClose }) {
     const { user } = useAuth();
@@ -20,6 +21,12 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     const [loading, setLoading] = useState(true);
     const [dataFromApi, setDataFromApi] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
+
+    const errorToast = () => {
+        toast.error("Le statut n'a pas été modifié.\n Il doit etre different du statut actuel", {
+            duration: 8000,
+        });
+    };
 
     async function getDataFromSirenApi() {
         try {
@@ -56,7 +63,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
 
     async function handleValidate(validationStatus) {
         try {
-            console.log('api token' + ApiToken);
             await Axios.api.put(
                 `/pro/${selectedOwner.owner_id}/validation/${validationStatus}`,
                 null,
@@ -67,9 +73,12 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     },
                 },
             );
+
             onClose();
         } catch (error) {
             console.log(error);
+            errorToast();
+            onClose();
         }
     }
 
@@ -179,6 +188,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
 
     return (
         <>
+            <Toaster />
             <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{'Verification de la conformité'}</DialogTitle>
                 {loading ? (
