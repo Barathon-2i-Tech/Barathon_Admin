@@ -1,17 +1,20 @@
-import Person from '@mui/icons-material/Person';
 import Paper from '@mui/material/Paper';
-import { BasicPage } from '../../components/BasicPage';
+import Copyright from '../../components/Copyright';
+import ValidationBanner from '../../components/Dashboard/ValidationBanner';
 export const DashboardPage = () => {
     return (
-        <Paper
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '80vh',
-                width: '100%',
-            }}
-        >
-            <BasicPage title="Dashboard Page" icon={<Person />} />
-        </Paper>
+        <>
+            <Paper
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    padding: '1rem',
+                }}
+            >
+                <ValidationBanner />
+                <Copyright sx={{ pt: 15 }} />
+            </Paper>
+        </>
     );
 };
