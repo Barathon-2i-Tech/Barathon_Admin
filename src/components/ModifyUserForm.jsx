@@ -71,7 +71,7 @@ function ModifyUserForm({
 
     async function handleModify(values) {
         try {
-            await Axios.api.post(`${updateUserUrl}`, values, {
+            await Axios.api.put(`${updateUserUrl}`, values, {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',

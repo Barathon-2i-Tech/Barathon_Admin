@@ -602,7 +602,7 @@ function UserDatagrid() {
                         users={allBarathoniens}
                         selectedUserId={selectedBarathonienId}
                         onClose={handleClose}
-                        deleteUrl={`/barathonien/delete/${selectedBarathonienId}`}
+                        deleteUrl={`/barathonien/${selectedBarathonienId}`}
                         restoreUrl={`/barathonien/restore/${selectedBarathonienId}`}
                     />
                 </Dialog>
@@ -611,7 +611,7 @@ function UserDatagrid() {
                     onClose={handleClose}
                     validationSchema={validationSchemaBarathonien}
                     getUserByIdUrl={`/barathonien/${selectedBarathonienId}`}
-                    updateUserUrl={`/barathonien/update/${selectedBarathonienId}`}
+                    updateUserUrl={`/barathonien/${selectedBarathonienId}`}
                     initialValues={barathonienInitialValues}
                 />
             </div>
@@ -634,7 +634,7 @@ function UserDatagrid() {
                         users={allOwners}
                         selectedUserId={selectedOwnerId}
                         onClose={handleClose}
-                        deleteUrl={`/pro/delete/${selectedOwnerId}`}
+                        deleteUrl={`/pro/${selectedOwnerId}`}
                         restoreUrl={`/pro/restore/${selectedOwnerId}`}
                     />
                 </Dialog>
@@ -643,7 +643,7 @@ function UserDatagrid() {
                     onClose={handleClose}
                     validationSchema={validationSchemaOwner}
                     getUserByIdUrl={`/pro/${selectedOwnerId}`}
-                    updateUserUrl={`/pro/update/${selectedOwnerId}`}
+                    updateUserUrl={`/pro/${selectedOwnerId}`}
                     initialValues={ownerInitialValues}
                 />
                 <OwnerValidationForm
@@ -671,7 +671,7 @@ function UserDatagrid() {
                         users={allAdministrators}
                         selectedUserId={selectedAdministratorId}
                         onClose={handleClose}
-                        deleteUrl={`/administrator/delete/${selectedAdministratorId}`}
+                        deleteUrl={`/administrator/${selectedAdministratorId}`}
                         restoreUrl={`/administrator/restore/${selectedAdministratorId}`}
                     />
                 </Dialog>
@@ -681,7 +681,7 @@ function UserDatagrid() {
                     onClose={handleClose}
                     validationSchema={validationSchemaAdministrator}
                     getUserByIdUrl={`/administrator/${selectedAdministratorId}`}
-                    updateUserUrl={`/administrator/update/${selectedAdministratorId}`}
+                    updateUserUrl={`/administrator/${selectedAdministratorId}`}
                     initialValues={admnistratorInitialValues}
                 />
             </div>
