@@ -1,8 +1,17 @@
 import { useEffect, useState /* useContext */ } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridToolbar,
+    GridToolbarContainer,
+    GridToolbarColumnsButton,
+    GridToolbarFilterButton,
+    GridToolbarExport,
+    GridToolbarDensitySelector,
+} from '@mui/x-data-grid';
 import Axios from '../utils/axiosUrl';
 import { Box, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
@@ -11,12 +20,14 @@ import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import { green, red, orange, grey } from '@mui/material/colors';
-import HeaderDatagrid from './HeaderDatagrid';
 import * as Yup from 'yup';
+import HeaderDatagrid from './HeaderDatagrid';
 import ModifyUserForm from './ModifyUserForm';
 import ModalUpdateUser from './ModalUpdateUser';
 import OwnerValidationForm from './Form/OwnerValidationForm';
+import NewAdministratorForm from './Form/NewAdministratorForm';
 
 function UserDatagrid() {
     const { user } = useAuth();
@@ -40,6 +51,7 @@ function UserDatagrid() {
     const [openBarathonienForm, setOpenBarathonienForm] = useState(false);
     const [openOwnerForm, setOpenOwnerForm] = useState(false);
     const [openAdministratorForm, setOpenAdministratorForm] = useState(false);
+    const [openNewAdministratorForm, setOpenNewAdministratorForm] = useState(false);
 
     function handleClose() {
         setOpenBarathonien(false);
@@ -49,6 +61,7 @@ function UserDatagrid() {
         setOpenAdministrator(false);
         setOpenAdministratorForm(false);
         setOpenOwnerFormValidation(false);
+        setOpenNewAdministratorForm(false);
     }
 
     const rowCommonDeletedAt = {
@@ -451,6 +464,39 @@ function UserDatagrid() {
         }
     }
 
+    const RightAlignedContainer = styled(GridToolbarContainer)({
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        '& .right-align': {
+            marginLeft: 'auto',
+        },
+    });
+
+    function administratorCustomToolbar() {
+        return (
+            <RightAlignedContainer>
+                <div>
+                    <GridToolbarColumnsButton />
+                    <GridToolbarFilterButton />
+                    <GridToolbarDensitySelector />
+                    <GridToolbarExport />
+                </div>
+                {user.superAdmin === true && (
+                    <Button
+                        variant="contained"
+                        size="small"
+                        className="right-align"
+                        startIcon={<AddIcon />}
+                        onClick={handleClickOpenNewAdmnistrator}
+                    >
+                        Créer un administrateur
+                    </Button>
+                )}
+            </RightAlignedContainer>
+        );
+    }
+
     const validationSchemaAdministrator = Yup.object({
         first_name: Yup.string().required('Requis'),
         last_name: Yup.string().required('Requis'),
@@ -468,6 +514,10 @@ function UserDatagrid() {
     const handleClickOpenAdmnistrator = (id) => {
         setSelectedAdministratorId(id);
         setOpenAdministrator(true);
+    };
+
+    const handleClickOpenNewAdmnistrator = () => {
+        setOpenNewAdministratorForm(true);
     };
 
     const handleClickOpenAdmnistratorForm = (id) => {
@@ -658,7 +708,7 @@ function UserDatagrid() {
                     <DataGrid
                         rows={administratorsRows}
                         columns={administratorsColumns}
-                        components={{ Toolbar: GridToolbar }}
+                        components={{ Toolbar: administratorCustomToolbar }}
                     />
                 </Box>
                 <Dialog
@@ -684,6 +734,7 @@ function UserDatagrid() {
                     updateUserUrl={`/administrator/${selectedAdministratorId}`}
                     initialValues={admnistratorInitialValues}
                 />
+                <NewAdministratorForm open={openNewAdministratorForm} onClose={handleClose} />
             </div>
         </>
     );
