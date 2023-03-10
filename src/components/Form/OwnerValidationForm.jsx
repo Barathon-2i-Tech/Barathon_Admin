@@ -268,6 +268,13 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                             Refusé
                         </Button>
                         <Button
+                            color="warning"
+                            disabled={Object.keys(dataFromApi).length === 0}
+                            onClick={() => handleValidate(statusFromApi[2].status_id)}
+                        >
+                            En attente
+                        </Button>
+                        <Button
                             color="success"
                             disabled={Object.keys(dataFromApi).length === 0}
                             onClick={() => handleValidate(statusFromApi[0].status_id)}

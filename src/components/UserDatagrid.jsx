@@ -629,6 +629,7 @@ function UserDatagrid() {
         openAdministrator,
         openAdministratorForm,
         openOwnerFormValidation,
+        openNewAdministratorForm,
     ]);
 
     return (
