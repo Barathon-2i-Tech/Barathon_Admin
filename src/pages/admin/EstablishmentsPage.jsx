@@ -1,6 +1,6 @@
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import Paper from '@mui/material/Paper';
-import { BasicPage } from '../../components/BasicPage';
+import Copyright from '../../components/Copyright';
+import EstablishmentDatagrid from '../../components/Establishment/EstablishmentDatagrid';
 
 export const EstablishmentsPage = () => {
     return (
@@ -12,7 +12,8 @@ export const EstablishmentsPage = () => {
                 width: '100%',
             }}
         >
-            <BasicPage title="Establishment Page" icon={<HomeWorkIcon />} />
+            <EstablishmentDatagrid />
+            <Copyright sx={{ pt: 15 }} />
         </Paper>
     );
 };
