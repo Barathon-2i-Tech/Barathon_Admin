@@ -9,6 +9,7 @@ function ValidationBanner() {
     const ApiToken = user.token;
 
     const [numberOwnerToValidate, setNumberOwnerToValidate] = useState(0);
+    const [numberEstablishmentToValidate, setNumberEstablishmentToValidate] = useState(0);
 
     async function getNumberOwnerToValidate() {
         try {
@@ -24,14 +25,33 @@ function ValidationBanner() {
             console.log(error);
         }
     }
+    async function getNumberEstablishmentToValidate() {
+        try {
+            const response = await Axios.api.get('/admin/establishment-to-validate', {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            setNumberEstablishmentToValidate(response.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         getNumberOwnerToValidate();
+        getNumberEstablishmentToValidate();
     }, []);
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
-            <ValidationCounter title="Professionnel(s) a valider :" value={numberOwnerToValidate} />
+            <ValidationCounter title="Professionnel(s) à valider :" value={numberOwnerToValidate} />
+            <ValidationCounter
+                title="Etablissement(s) à valider :"
+                value={numberEstablishmentToValidate}
+            />
         </Box>
     );
 }
