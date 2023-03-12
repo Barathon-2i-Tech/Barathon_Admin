@@ -46,6 +46,7 @@ function EstablishmentDatagrid() {
     }
 
     const handleCLickOpenEstablishmentVerification = (data) => {
+        console.log(data);
         setSelectedEstablishment(data);
         setOpenEstablishmentFormValidation(true);
     };
@@ -90,7 +91,7 @@ function EstablishmentDatagrid() {
         { field: 'id', headerName: 'ID', flex: 0.1, headerAlign: 'center', align: 'center' },
         {
             field: 'trade_name',
-            headerName: 'Nom commercial',
+            headerName: 'Raison sociale',
             flex: 0.2,
             headerAlign: 'center',
             align: 'center',
@@ -258,7 +259,7 @@ function EstablishmentDatagrid() {
             </Dialog>
             <EstablishmentValidationForm
                 open={openEstablishmentFormValidation}
-                selectedOwner={selectedEstablishment}
+                selectedEstablishment={selectedEstablishment}
                 onClose={handleClose}
             />
         </div>
