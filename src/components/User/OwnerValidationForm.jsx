@@ -21,6 +21,8 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     const [loading, setLoading] = useState(true);
     const [dataFromApi, setDataFromApi] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
+    const [sirenNotFound, setSirenNotFound] = useState(false);
+    const [tooManyRequests, setTooManyRequests] = useState(false);
 
     const errorToast = () => {
         toast.error("Le statut n'a pas été modifié.\n Il doit etre different du statut actuel", {
@@ -42,6 +44,13 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             setLoading(false);
         } catch (error) {
             console.log(error);
+            if (error.response && error.response.status === 404) {
+                setSirenNotFound(true);
+            }
+            if (error.response && error.response.status === 429) {
+                setTooManyRequests(true);
+            }
+            setLoading(false);
             setLoading(false);
         }
     }
@@ -126,10 +135,25 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     }
 
     function dataToDisplay() {
+        if (sirenNotFound === true) {
+            return (
+                <Typography variant="overline" color="error">
+                    Entreprise non trouvé
+                </Typography>
+            );
+        }
+        if (tooManyRequests === true) {
+            return (
+                <Typography variant="overline" color="error">
+                    Trop de requêtes. Merci de patienter
+                </Typography>
+            );
+        }
+
         if (dataFromApi.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C') {
             return (
                 <Typography variant="overline" color="error">
-                    Entreprise administrativement fermée
+                    Entreprise administrativement fermée <br />
                 </Typography>
             );
         }
@@ -225,7 +249,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                             )}
                         </List>
 
-                        {loading === false && Object.keys(dataFromApi).length !== 0 ? (
+                        {loading === false && (
                             <div>
                                 <List
                                     sx={{
@@ -248,10 +272,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                                     {dataToDisplay()}
                                 </List>
                             </div>
-                        ) : (
-                            <Typography variant="overline" color="error">
-                                Siren non trouvé
-                            </Typography>
                         )}
                         <Button variant="contained" onClick={handleSearch}>
                             Plus d&lsquo;informations sur Societe.com
