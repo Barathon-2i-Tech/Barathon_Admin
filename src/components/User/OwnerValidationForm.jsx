@@ -192,7 +192,9 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{'Verification de la conformité'}</DialogTitle>
                 {loading ? (
-                    <DialogContent>
+                    <DialogContent
+                        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                    >
                         <InfinityLoader />
                     </DialogContent>
                 ) : (

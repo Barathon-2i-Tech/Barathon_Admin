@@ -116,7 +116,9 @@ function ModifyUserForm({
             <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title">
                 <DialogTitle id="alert-dialog-title">{"Modification de l'utilisateur"}</DialogTitle>
                 {loading ? (
-                    <DialogContent>
+                    <DialogContent
+                        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                    >
                         <InfinityLoader />
                     </DialogContent>
                 ) : (
