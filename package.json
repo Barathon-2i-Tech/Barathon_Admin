@@ -23,6 +23,7 @@
         "@mui/x-data-grid": "^5.17.25",
         "@testing-library/user-event": "^14.4.3",
         "axios": "^1.2.1",
+        "buffer": "^6.0.3",
         "commitizen": "^4.2.5",
         "dotenv": "^16.0.3",
         "formik": "^2.2.9",

@@ -2,6 +2,7 @@ import { useEffect, useState /* useContext */ } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import * as Yup from 'yup';
 import Axios from '../../utils/axiosUrl';
+import { Buffer } from 'buffer';
 import {
     DataGrid,
     GridToolbar,
@@ -297,6 +298,23 @@ function UserDatagrid() {
         }
     }
 
+    function decodeKbis(params) {
+        //get kbis encoded in base64
+        const kbis = params.row.kbis;
+
+        //decode kbis encoded in base64
+        const kbisDecoded = Buffer.from(kbis, 'base64');
+
+        //convert kbis to blob ( Javascript object who represent a file )
+        const kbisBlob = new Blob([kbisDecoded], { type: 'application/pdf' });
+
+        //create a url to download the file
+        const kbisUrl = URL.createObjectURL(kbisBlob);
+
+        // return the url
+        return kbisUrl;
+    }
+
     const ownersRows = allOwners.map((owner) => ({
         key: owner.user_id,
         id: owner.user_id,
@@ -331,7 +349,21 @@ function UserDatagrid() {
         },
         { field: 'email', headerName: 'Email', flex: 0.4, headerAlign: 'center', align: 'center' },
         { field: 'siren', headerName: 'Siren', flex: 0.3, headerAlign: 'center', align: 'center' },
-        { field: 'kbis', headerName: 'Kbis', flex: 0.4, headerAlign: 'center', align: 'center' },
+        {
+            field: 'kbis',
+            headerName: 'Kbis',
+            flex: 0.4,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: decodeKbis,
+            renderCell: ({ row: { kbis, company_name } }) => {
+                return (
+                    <a href={kbis} download={`${company_name}_Kbis.pdf`}>
+                        Kbis
+                    </a>
+                );
+            },
+        },
         {
             field: 'phone',
             headerName: 'Téléphone',
