@@ -1,5 +1,7 @@
 import { useEffect, useState /* useContext */ } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
+import * as Yup from 'yup';
+import Axios from '../../utils/axiosUrl';
 import {
     DataGrid,
     GridToolbar,
@@ -9,7 +11,6 @@ import {
     GridToolbarExport,
     GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
-import Axios from '../utils/axiosUrl';
 import { Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -22,12 +23,11 @@ import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { green, red, orange, grey } from '@mui/material/colors';
-import * as Yup from 'yup';
-import HeaderDatagrid from './HeaderDatagrid';
+import HeaderDatagrid from '../HeaderDatagrid';
 import ModifyUserForm from './ModifyUserForm';
 import ModalUpdateUser from './ModalUpdateUser';
-import OwnerValidationForm from './Form/OwnerValidationForm';
-import NewAdministratorForm from './Form/NewAdministratorForm';
+import OwnerValidationForm from '../User/OwnerValidationForm';
+import NewAdministratorForm from '../User/NewAdministratorForm';
 
 function UserDatagrid() {
     const { user } = useAuth();

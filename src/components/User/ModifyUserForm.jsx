@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import PropTypes from 'prop-types';
-import Axios from '../utils/axiosUrl';
+import Axios from '../../utils/axiosUrl';
 import { Button } from '@mui/material';
 import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
@@ -10,11 +10,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import InfinityLoader from './InfinityLoader';
-import BarathonienFieldForm from './Form/BarathonienFieldForm';
-import OwnerFieldForm from './Form/OwnerFieldForm';
-import CommonFormFields from './Form/CommonFormFields';
-import AdministratorFieldForm from './Form/AdministratorFieldForm';
+import InfinityLoader from '../InfinityLoader';
+import BarathonienFieldForm from './BarathonienFieldForm';
+import OwnerFieldForm from './OwnerFieldForm';
+import CommonFormFields from './CommonFormFields';
+import AdministratorFieldForm from './AdministratorFieldForm';
 
 function ModifyUserForm({
     open,

@@ -11,7 +11,7 @@ import InfinityLoader from '../InfinityLoader';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';
-import ListValidationField from './ListValidationField';
+import ListValidationField from '../Form/ListValidationField';
 import toast, { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
 

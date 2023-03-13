@@ -1,5 +1,5 @@
+import FormSelect from '../Form/FormSelect';
 import PropTypes from 'prop-types';
-import FormSelect from './FormSelect';
 
 function AdministratorFieldForm({ formik }) {
     return (
