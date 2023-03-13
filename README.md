@@ -2,6 +2,16 @@
 
 You need Visual Studio Code and Docker installed.
 
+## .env
+
+You need copy first the .env.example file by renaming it to .env and complete the following fields:
+
+- VITE_API_URL
+
+```bash
+cp .env.example .env
+```
+
 ## Start Docker
 
 Run the Docker Desktop application to start Docker. You will know it's running if you look in the activity tray and see the Docker whale icon.
