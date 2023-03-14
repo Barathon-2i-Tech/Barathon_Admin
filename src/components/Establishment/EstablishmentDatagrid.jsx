@@ -4,8 +4,6 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Axios from '../../utils/axiosUrl';
 import { Box, Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoneIcon from '@mui/icons-material/Done';
@@ -13,6 +11,7 @@ import { green, red, orange, grey } from '@mui/material/colors';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModalDeleteRestore from '../Establishment/ModalDeleteRestore';
 import EstablishmentValidationForm from './EstablishmentValidationForm';
+import { rowCommonDeletedAt } from '../Datagrid/datagridRessource';
 
 function EstablishmentDatagrid() {
     const { user } = useAuth();
@@ -158,29 +157,7 @@ function EstablishmentDatagrid() {
                 );
             },
         },
-        {
-            field: 'deleted_at',
-            headerName: 'Actif',
-            flex: 0.2,
-            headerAlign: 'center',
-            align: 'center',
-            renderCell: ({ row: { deleted_at } }) => {
-                return (
-                    <Box
-                        width="100%"
-                        m="0 auto"
-                        p="5px"
-                        display="flex"
-                        justifyContent="center"
-                        backgroundColor={deleted_at === null ? green[400] : red[400]}
-                        borderRadius="5px"
-                    >
-                        {deleted_at === null && <HowToRegIcon />}
-                        {deleted_at !== null && <PersonRemoveIcon />}
-                    </Box>
-                );
-            },
-        },
+        rowCommonDeletedAt,
         {
             field: 'action',
             headerName: 'Action',

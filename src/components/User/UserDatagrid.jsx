@@ -15,8 +15,6 @@ import {
 import { Box, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
@@ -29,6 +27,7 @@ import ModifyUserForm from './ModifyUserForm';
 import ModalUpdateUser from './ModalUpdateUser';
 import OwnerValidationForm from '../User/OwnerValidationForm';
 import NewAdministratorForm from '../User/NewAdministratorForm';
+import { rowCommonDeletedAt } from '../Datagrid/datagridRessource';
 
 function UserDatagrid() {
     const { user } = useAuth();
@@ -64,30 +63,6 @@ function UserDatagrid() {
         setOpenOwnerFormValidation(false);
         setOpenNewAdministratorForm(false);
     }
-
-    const rowCommonDeletedAt = {
-        field: 'deleted_at',
-        headerName: 'Actif',
-        flex: 0.2,
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: ({ row: { deleted_at } }) => {
-            return (
-                <Box
-                    width="100%"
-                    m="0 auto"
-                    p="5px"
-                    display="flex"
-                    justifyContent="center"
-                    backgroundColor={deleted_at === null ? green[400] : red[400]}
-                    borderRadius="5px"
-                >
-                    {deleted_at === null && <HowToRegIcon />}
-                    {deleted_at !== null && <PersonRemoveIcon />}
-                </Box>
-            );
-        },
-    };
 
     /*********************************************
     |
