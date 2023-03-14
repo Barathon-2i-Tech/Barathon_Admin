@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import { green, red } from '@mui/material/colors';
+import { green, red, orange, grey } from '@mui/material/colors';
 
 export const rowCommonDeletedAt = {
     field: 'deleted_at',
@@ -25,4 +25,23 @@ export const rowCommonDeletedAt = {
             </Box>
         );
     },
+};
+
+export const getStatusBackgroundColor = (status, prefix) => {
+    let backgroundColor = null;
+    switch (status.code) {
+        case `${prefix}_VALID`:
+            backgroundColor = green[400];
+            break;
+        case `${prefix}_PENDING`:
+            backgroundColor = orange[400];
+            break;
+        case `${prefix}_REFUSE`:
+            backgroundColor = red[400];
+            break;
+        default:
+            backgroundColor = grey[400];
+            break;
+    }
+    return backgroundColor;
 };

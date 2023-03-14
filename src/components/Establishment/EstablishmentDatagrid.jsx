@@ -7,11 +7,10 @@ import Dialog from '@mui/material/Dialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoneIcon from '@mui/icons-material/Done';
-import { green, red, orange, grey } from '@mui/material/colors';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModalDeleteRestore from '../ModalDeleteRestore';
 import EstablishmentValidationForm from './EstablishmentValidationForm';
-import { rowCommonDeletedAt } from '../Datagrid/datagridRessource';
+import { rowCommonDeletedAt, getStatusBackgroundColor } from '../Datagrid/datagridUtils';
 
 function EstablishmentDatagrid() {
     const { user } = useAuth();
@@ -91,7 +90,7 @@ function EstablishmentDatagrid() {
         {
             field: 'trade_name',
             headerName: 'Raison sociale',
-            flex: 0.2,
+            flex: 0.3,
             headerAlign: 'center',
             align: 'center',
         },
@@ -103,7 +102,7 @@ function EstablishmentDatagrid() {
             headerAlign: 'center',
             align: 'center',
         },
-        { field: 'email', headerName: 'Email', flex: 0.2, headerAlign: 'center', align: 'center' },
+        { field: 'email', headerName: 'Email', flex: 0.3, headerAlign: 'center', align: 'center' },
         {
             field: 'address',
             headerName: 'Adresse',
@@ -114,7 +113,7 @@ function EstablishmentDatagrid() {
         {
             field: 'postal_code',
             headerName: 'Code postal',
-            flex: 0.2,
+            flex: 0.17,
             headerAlign: 'center',
             align: 'center',
         },
@@ -127,21 +126,7 @@ function EstablishmentDatagrid() {
             align: 'center',
             valueGetter: getStatus,
             renderCell: ({ row: { status } }) => {
-                let backgroundColor = null;
-                switch (status.code) {
-                    case 'ESTABL_VALID':
-                        backgroundColor = green[400];
-                        break;
-                    case 'ESTABL_PENDING':
-                        backgroundColor = orange[400];
-                        break;
-                    case 'ESTABL_REFUSE':
-                        backgroundColor = red[400];
-                        break;
-                    default:
-                        backgroundColor = grey[400];
-                        break;
-                }
+                const backgroundColor = getStatusBackgroundColor(status, 'ESTABL');
                 return (
                     <Box
                         width="100%"

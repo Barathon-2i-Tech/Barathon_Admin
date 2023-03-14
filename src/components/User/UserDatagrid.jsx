@@ -21,12 +21,12 @@ import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import { green, red, orange, grey } from '@mui/material/colors';
+import { green, red } from '@mui/material/colors';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModifyUserForm from './ModifyUserForm';
 import OwnerValidationForm from '../User/OwnerValidationForm';
 import NewAdministratorForm from '../User/NewAdministratorForm';
-import { rowCommonDeletedAt } from '../Datagrid/datagridRessource';
+import { rowCommonDeletedAt, getStatusBackgroundColor } from '../Datagrid/datagridUtils';
 import ModalDeleteRestore from '../ModalDeleteRestore';
 
 function UserDatagrid() {
@@ -327,7 +327,7 @@ function UserDatagrid() {
         {
             field: 'kbis',
             headerName: 'Kbis',
-            flex: 0.4,
+            flex: 0.2,
             headerAlign: 'center',
             align: 'center',
             valueGetter: decodeKbis,
@@ -355,21 +355,7 @@ function UserDatagrid() {
             align: 'center',
             valueGetter: getStatus,
             renderCell: ({ row: { status } }) => {
-                let backgroundColor = null;
-                switch (status.code) {
-                    case 'OWNER_VALID':
-                        backgroundColor = green[400];
-                        break;
-                    case 'OWNER_PENDING':
-                        backgroundColor = orange[400];
-                        break;
-                    case 'OWNER_REFUSE':
-                        backgroundColor = red[400];
-                        break;
-                    default:
-                        backgroundColor = grey[400];
-                        break;
-                }
+                const backgroundColor = getStatusBackgroundColor(status, 'OWNER');
                 return (
                     <Box
                         width="100%"
