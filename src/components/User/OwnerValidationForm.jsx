@@ -19,10 +19,8 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
-    const [dataFromApi, setDataFromApi] = useState({});
+    const [sirenData, setSirenData] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
-    const [sirenNotFound, setSirenNotFound] = useState(false);
-    const [tooManyRequests, setTooManyRequests] = useState(false);
 
     const errorToast = () => {
         toast.error("Le statut n'a pas été modifié.\n Il doit etre different du statut actuel", {
@@ -40,17 +38,30 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 },
             });
             getValidationStatus();
-            setDataFromApi(response.data.data);
+            setSirenData(response.data.data);
             setLoading(false);
         } catch (error) {
             console.log(error);
-            if (error.response && error.response.status === 404) {
-                setSirenNotFound(true);
+            getValidationStatus();
+            if (error.response) {
+                switch (error.response.status) {
+                    case 404:
+                        setSirenData({
+                            siren: 'notfound',
+                        });
+                        break;
+                    case 429:
+                        setSirenData({
+                            siren: 'tooManyRequests',
+                        });
+                        break;
+                    default:
+                        setSirenData({
+                            siren: 'error',
+                        });
+                        break;
+                }
             }
-            if (error.response && error.response.status === 429) {
-                setTooManyRequests(true);
-            }
-            setLoading(false);
             setLoading(false);
         }
     }
@@ -92,7 +103,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     }
 
     function usualDenomination() {
-        const { periodesUniteLegale } = dataFromApi;
+        const { periodesUniteLegale } = sirenData;
         const {
             denominationUsuelle1UniteLegale,
             denominationUsuelleEtablissement,
@@ -108,25 +119,25 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             <>
                 {denominationUsuelleEtablissement && (
                     <ListValidationField
-                        label="Nom commercial"
+                        label="Raison sociale"
                         value={`${denominationUsuelleEtablissement}`}
                     />
                 )}
                 {denominationUsuelle1UniteLegale && (
                     <ListValidationField
-                        label="Nom commercial"
+                        label="Raison sociale"
                         value={`${denominationUsuelle1UniteLegale}`}
                     />
                 )}
                 {denominationUsuelle2UniteLegale && (
                     <ListValidationField
-                        label="Nom commercial (2eme ligne)"
+                        label="Raison sociale (2eme ligne)"
                         value={`${denominationUsuelle2UniteLegale}`}
                     />
                 )}
                 {denominationUsuelle3UniteLegale && (
                     <ListValidationField
-                        label="Nom commercial (3eme ligne)"
+                        label="Raison sociale (3eme ligne)"
                         value={`${denominationUsuelle3UniteLegale}`}
                     />
                 )}
@@ -135,67 +146,67 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     }
 
     function dataToDisplay() {
-        if (sirenNotFound === true) {
-            return (
-                <Typography variant="overline" color="error">
-                    Entreprise non trouvé
-                </Typography>
-            );
-        }
-        if (tooManyRequests === true) {
-            return (
-                <Typography variant="overline" color="error">
-                    Trop de requêtes. Merci de patienter
-                </Typography>
-            );
-        }
-
-        if (dataFromApi.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C') {
-            return (
-                <Typography variant="overline" color="error">
-                    Entreprise administrativement fermée <br />
-                </Typography>
-            );
-        }
-
-        // personne morale
-        if (dataFromApi.periodesUniteLegale[0].denominationUniteLegale !== null) {
-            return (
-                <>
-                    <Typography variant="overline" sx={{ color: 'green' }}>
-                        Personne morale trouvée
+        switch (sirenData.siren) {
+            case 'notfound':
+                return (
+                    <Typography variant="overline" color="error">
+                        Entreprise non trouvée
                     </Typography>
-                    <ListValidationField label="Siren" value={`${dataFromApi.siren}`} />
-                    <ListValidationField
-                        label="Raison sociale"
-                        value={`${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
-                    />
-                    {usualDenomination()}
-                    <ListValidationField
-                        label="Sigle"
-                        value={`${dataFromApi.periodesUniteLegale[0].denominationUniteLegale}`}
-                    />
-                </>
-            );
+                );
+            case 'tooManyRequests':
+                return (
+                    <Typography variant="overline" color="error">
+                        Trop de requêtes. Merci de patienter et de réessayer
+                    </Typography>
+                );
+            default:
+                if (sirenData.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C') {
+                    return (
+                        <Typography variant="overline" color="error">
+                            Entreprise administrativement fermée <br />
+                        </Typography>
+                    );
+                }
+
+                // personne morale
+                if (sirenData.periodesUniteLegale[0].denominationUniteLegale !== null) {
+                    return (
+                        <>
+                            <Typography variant="overline" sx={{ color: 'green' }}>
+                                Personne morale trouvée
+                            </Typography>
+                            <ListValidationField label="Siren" value={`${sirenData.siren}`} />
+                            <ListValidationField
+                                label="Raison sociale"
+                                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
+                            />
+                            {usualDenomination()}
+                            <ListValidationField
+                                label="Sigle"
+                                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
+                            />
+                        </>
+                    );
+                }
+                //personne physique
+                return (
+                    <>
+                        <Typography variant="overline" sx={{ color: 'green' }}>
+                            Personne physique trouvée
+                        </Typography>
+                        <ListValidationField label="Siren" value={`${sirenData.siren}`} />
+                        {usualDenomination()}
+                        <ListValidationField
+                            label="Nom"
+                            value={`${sirenData.periodesUniteLegale[0].nomUniteLegale}`}
+                        />
+                        <ListValidationField
+                            label="Prénom"
+                            value={`${sirenData.prenomUsuelUniteLegale}`}
+                        />
+                    </>
+                );
         }
-        //personne physique
-        return (
-            <>
-                <Typography variant="overline" sx={{ color: 'green' }}>
-                    Personne physique trouvée
-                </Typography>
-                <ListValidationField label="Siren" value={`${dataFromApi.siren}`} />
-                {usualDenomination()}
-                <ListValidationField
-                    label="Nom"
-                    value={`${dataFromApi.periodesUniteLegale[0].nomUniteLegale}`}
-                />
-                <ListValidationField
-                    label="Prénom"
-                    value={`${dataFromApi.prenomUsuelUniteLegale}`}
-                />
-            </>
-        );
     }
 
     const handleSearch = (event) => {
@@ -284,21 +295,24 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     <ButtonGroup variant="contained">
                         <Button
                             color="error"
-                            disabled={Object.keys(dataFromApi).length === 0}
                             onClick={() => handleValidate(statusFromApi[1].status_id)}
                         >
                             Refusé
                         </Button>
                         <Button
                             color="warning"
-                            disabled={Object.keys(dataFromApi).length === 0}
                             onClick={() => handleValidate(statusFromApi[2].status_id)}
                         >
                             En attente
                         </Button>
                         <Button
                             color="success"
-                            disabled={Object.keys(dataFromApi).length === 0}
+                            disabled={
+                                Object.keys(sirenData).length === 0 ||
+                                sirenData.siren === 'notfound' ||
+                                sirenData.siren === 'tooManyRequests' ||
+                                sirenData.siren === 'error'
+                            }
                             onClick={() => handleValidate(statusFromApi[0].status_id)}
                         >
                             Valider

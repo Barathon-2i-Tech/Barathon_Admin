@@ -330,7 +330,8 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                             disabled={
                                 Object.keys(siretData).length === 0 ||
                                 siretData.siret === 'notfound' ||
-                                siretData.siret === 'tooManyRequests'
+                                siretData.siret === 'tooManyRequests' ||
+                                siretData.siren === 'error'
                             }
                             onClick={() => handleValidate(statusFromApi[0].status_id)}
                         >
