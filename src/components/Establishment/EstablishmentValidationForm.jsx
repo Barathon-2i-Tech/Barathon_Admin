@@ -19,10 +19,8 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [loading, setLoading] = useState(true);
-    const [dataFromApi, setDataFromApi] = useState({});
+    const [siretData, setSiretData] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
-    const [siretNotFound, setSiretNotFound] = useState(false);
-    const [tooManyRequests, setTooManyRequests] = useState(false);
 
     const errorToast = () => {
         toast.error("Le statut n'a pas été modifié.\n Il doit etre different du statut actuel", {
@@ -40,16 +38,31 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 },
             });
             getEstablishmentValidationStatus();
-            setDataFromApi(response.data.data);
+            setSiretData(response.data.data);
             setLoading(false);
         } catch (error) {
             console.log(error);
-            if (error.response && error.response.status === 404) {
-                setSiretNotFound(true);
+            getEstablishmentValidationStatus();
+            if (error.response) {
+                switch (error.response.status) {
+                    case 404:
+                        setSiretData({
+                            siret: 'notfound',
+                        });
+                        break;
+                    case 429:
+                        setSiretData({
+                            siret: 'tooManyRequests',
+                        });
+                        break;
+                    default:
+                        setSiretData({
+                            siret: 'error',
+                        });
+                        break;
+                }
             }
-            if (error.response && error.response.status === 429) {
-                setTooManyRequests(true);
-            }
+
             setLoading(false);
         }
     }
@@ -90,7 +103,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
         }
     }
     function usualDenomination() {
-        const { periodesEtablissement } = dataFromApi;
+        const { periodesEtablissement } = siretData;
         const {
             denominationUsuelleEtablissement,
             enseigne1Etablissement,
@@ -133,7 +146,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     }
 
     function establishmentAddress() {
-        const { adresseEtablissement } = dataFromApi;
+        const { adresseEtablissement } = siretData;
         return (
             <>
                 <ListValidationField
@@ -153,51 +166,57 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     }
 
     function dataToDisplay() {
-        if (siretNotFound === true) {
-            return (
-                <Typography variant="overline" color="error">
-                    Etablissement non trouvé
-                </Typography>
-            );
-        }
-        if (tooManyRequests === true) {
-            return (
-                <Typography variant="overline" color="error">
-                    Trop de requêtes. Merci de patienter
-                </Typography>
-            );
-        }
+        switch (siretData.siret) {
+            case 'notfound':
+                return (
+                    <Typography variant="overline" color="error">
+                        Etablissement non trouvé
+                    </Typography>
+                );
+            case 'tooManyRequests':
+                return (
+                    <Typography variant="overline" color="error">
+                        Trop de requêtes. Merci de patienter et de réessayer
+                    </Typography>
+                );
+            case 'error':
+                return (
+                    <Typography variant="overline" color="error">
+                        Une erreur est survenue
+                    </Typography>
+                );
+            default:
+                if (
+                    siretData.periodesEtablissement[0].etatAdministratifEtablissement === 'F' ||
+                    siretData.uniteLegale.etatAdministratifUniteLegale === 'C'
+                ) {
+                    return (
+                        <Typography variant="overline" color="error">
+                            Etablissement administrativement fermé
+                        </Typography>
+                    );
+                }
 
-        if (
-            dataFromApi.periodesEtablissement[0].etatAdministratifEtablissement === 'F' ||
-            dataFromApi.uniteLegale.etatAdministratifUniteLegale === 'C'
-        ) {
-            return (
-                <Typography variant="overline" color="error">
-                    Etablissement administrativement fermé
-                </Typography>
-            );
-        }
-
-        if (dataFromApi.etablissementSiege === true) {
-            return (
-                <>
-                    <ListValidationField label="Siret" value={`${dataFromApi.siret}`} />
-                    <ListValidationField
-                        label="Raison sociale"
-                        value={`${dataFromApi.uniteLegale.denominationUniteLegale}`}
-                    />
-                    {establishmentAddress()}
-                </>
-            );
-        } else {
-            return (
-                <>
-                    <ListValidationField label="Siret" value={`${dataFromApi.siret}`} />
-                    {usualDenomination()}
-                    {establishmentAddress()}
-                </>
-            );
+                if (siretData.etablissementSiege === true) {
+                    return (
+                        <>
+                            <ListValidationField label="Siret" value={`${siretData.siret}`} />
+                            <ListValidationField
+                                label="Raison sociale"
+                                value={`${siretData.uniteLegale.denominationUniteLegale}`}
+                            />
+                            {establishmentAddress()}
+                        </>
+                    );
+                } else {
+                    return (
+                        <>
+                            <ListValidationField label="Siret" value={`${siretData.siret}`} />
+                            {usualDenomination()}
+                            {establishmentAddress()}
+                        </>
+                    );
+                }
         }
     }
 
@@ -210,8 +229,6 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     useEffect(() => {
         if (open) {
             getDataFromSiretApi();
-            setSiretNotFound(false);
-            setTooManyRequests(false);
         }
     }, [open]);
 
@@ -297,21 +314,24 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                     <ButtonGroup variant="contained">
                         <Button
                             color="error"
-                            disabled={Object.keys(dataFromApi).length === 0}
                             onClick={() => handleValidate(statusFromApi[1].status_id)}
                         >
                             Refusé
                         </Button>
                         <Button
                             color="warning"
-                            disabled={Object.keys(dataFromApi).length === 0}
+                            disabled={Object.keys(siretData).length === 0}
                             onClick={() => handleValidate(statusFromApi[2].status_id)}
                         >
                             En attente
                         </Button>
                         <Button
                             color="success"
-                            disabled={Object.keys(dataFromApi).length === 0}
+                            disabled={
+                                Object.keys(siretData).length === 0 ||
+                                siretData.siret === 'notfound' ||
+                                siretData.siret === 'tooManyRequests'
+                            }
                             onClick={() => handleValidate(statusFromApi[0].status_id)}
                         >
                             Valider

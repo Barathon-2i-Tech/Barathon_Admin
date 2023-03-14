@@ -44,7 +44,6 @@ function EstablishmentDatagrid() {
     }
 
     const handleCLickOpenEstablishmentVerification = (data) => {
-        console.log(data);
         setSelectedEstablishment(data);
         setOpenEstablishmentFormValidation(true);
     };
@@ -53,6 +52,10 @@ function EstablishmentDatagrid() {
         setSelectedOwnerId(owner_id);
         setOpenEstablishment(true);
     };
+
+    function getMoreReadableSiret(params) {
+        return params.row.siret.replace(/(\d{3})(\d{3})(\d{3})(\d{5})/, '$1 $2 $3 $4');
+    }
 
     function getStatus(params) {
         switch (params.row.status.code) {
@@ -94,7 +97,14 @@ function EstablishmentDatagrid() {
             headerAlign: 'center',
             align: 'center',
         },
-        { field: 'siret', headerName: 'SIRET', flex: 0.2, headerAlign: 'center', align: 'center' },
+        {
+            field: 'siret',
+            headerName: 'SIRET',
+            flex: 0.2,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: getMoreReadableSiret,
+        },
         {
             field: 'phone',
             headerName: 'Téléphone',
