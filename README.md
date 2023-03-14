@@ -1,3 +1,11 @@
+# Barathon Administration
+
+<div align="center">
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Barathon-2i-Tech_Barathon_Admin&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Barathon-2i-Tech_Barathon_Admin) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Barathon-2i-Tech_Barathon_Admin&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Barathon-2i-Tech_Barathon_Admin) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Barathon-2i-Tech_Barathon_Admin&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Barathon-2i-Tech_Barathon_Admin) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Barathon-2i-Tech_Barathon_Admin&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Barathon-2i-Tech_Barathon_Admin) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Barathon-2i-Tech_Barathon_Admin&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Barathon-2i-Tech_Barathon_Admin)
+
+</div>
+
 ## Prerequisites
 
 You need Visual Studio Code and Docker installed.
