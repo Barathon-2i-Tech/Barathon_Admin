@@ -24,10 +24,10 @@ import AddIcon from '@mui/icons-material/Add';
 import { green, red, orange, grey } from '@mui/material/colors';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModifyUserForm from './ModifyUserForm';
-import ModalUpdateUser from './ModalUpdateUser';
 import OwnerValidationForm from '../User/OwnerValidationForm';
 import NewAdministratorForm from '../User/NewAdministratorForm';
 import { rowCommonDeletedAt } from '../Datagrid/datagridRessource';
+import ModalDeleteRestore from '../ModalDeleteRestore';
 
 function UserDatagrid() {
     const { user } = useAuth();
@@ -656,12 +656,27 @@ function UserDatagrid() {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <ModalUpdateUser
-                        users={allBarathoniens}
-                        selectedUserId={selectedBarathonienId}
+                    <ModalDeleteRestore
+                        title="Gestion du barathonien"
+                        content={`Êtes-vous sûr de vouloir ${
+                            selectedBarathonienId !== null &&
+                            allBarathoniens.find(
+                                (barathonien) => barathonien.user_id === selectedBarathonienId,
+                            )?.deleted_at === null
+                                ? 'supprimer'
+                                : 'restaurer'
+                        } ce barathonien ?`}
                         onClose={handleClose}
                         deleteUrl={`/barathonien/${selectedBarathonienId}`}
                         restoreUrl={`/barathonien/restore/${selectedBarathonienId}`}
+                        action={
+                            selectedBarathonienId !== null &&
+                            allBarathoniens.find(
+                                (barathonien) => barathonien.user_id === selectedBarathonienId,
+                            )?.deleted_at === null
+                                ? 'delete'
+                                : 'restore'
+                        }
                     />
                 </Dialog>
                 <ModifyUserForm
@@ -688,12 +703,25 @@ function UserDatagrid() {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <ModalUpdateUser
-                        users={allOwners}
-                        selectedUserId={selectedOwnerId}
+                    <ModalDeleteRestore
+                        title="Gestion du professionnel"
+                        content={`Êtes-vous sûr de vouloir ${
+                            selectedOwnerId !== null &&
+                            allOwners.find((owner) => owner.user_id === selectedOwnerId)
+                                ?.deleted_at === null
+                                ? 'supprimer'
+                                : 'restaurer'
+                        } ce professionnel ?`}
                         onClose={handleClose}
                         deleteUrl={`/pro/${selectedOwnerId}`}
                         restoreUrl={`/pro/restore/${selectedOwnerId}`}
+                        action={
+                            selectedOwnerId !== null &&
+                            allOwners.find((owner) => owner.user_id === selectedOwnerId)
+                                ?.deleted_at === null
+                                ? 'delete'
+                                : 'restore'
+                        }
                     />
                 </Dialog>
                 <ModifyUserForm
@@ -725,12 +753,29 @@ function UserDatagrid() {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <ModalUpdateUser
-                        users={allAdministrators}
-                        selectedUserId={selectedAdministratorId}
+                    <ModalDeleteRestore
+                        title="Gestion de l'administrateur"
+                        content={`Êtes-vous sûr de vouloir ${
+                            selectedAdministratorId !== null &&
+                            allAdministrators.find(
+                                (administrator) =>
+                                    administrator.user_id === selectedAdministratorId,
+                            )?.deleted_at === null
+                                ? 'supprimer'
+                                : 'restaurer'
+                        } cet administrateur ?`}
                         onClose={handleClose}
                         deleteUrl={`/administrator/${selectedAdministratorId}`}
                         restoreUrl={`/administrator/restore/${selectedAdministratorId}`}
+                        action={
+                            selectedAdministratorId !== null &&
+                            allAdministrators.find(
+                                (administrator) =>
+                                    administrator.user_id === selectedAdministratorId,
+                            )?.deleted_at === null
+                                ? 'delete'
+                                : 'restore'
+                        }
                     />
                 </Dialog>
 

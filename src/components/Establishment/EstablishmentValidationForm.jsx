@@ -24,7 +24,6 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     const [siretNotFound, setSiretNotFound] = useState(false);
     const [tooManyRequests, setTooManyRequests] = useState(false);
 
-    console.log(selectedEstablishment);
     const errorToast = () => {
         toast.error("Le statut n'a pas été modifié.\n Il doit etre different du statut actuel", {
             duration: 8000,
@@ -41,7 +40,6 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 },
             });
             getEstablishmentValidationStatus();
-            console.log({ response });
             setDataFromApi(response.data.data);
             setLoading(false);
         } catch (error) {

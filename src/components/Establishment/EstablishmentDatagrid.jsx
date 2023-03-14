@@ -9,7 +9,7 @@ import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoneIcon from '@mui/icons-material/Done';
 import { green, red, orange, grey } from '@mui/material/colors';
 import HeaderDatagrid from '../HeaderDatagrid';
-import ModalDeleteRestore from '../Establishment/ModalDeleteRestore';
+import ModalDeleteRestore from '../ModalDeleteRestore';
 import EstablishmentValidationForm from './EstablishmentValidationForm';
 import { rowCommonDeletedAt } from '../Datagrid/datagridRessource';
 
@@ -227,11 +227,28 @@ function EstablishmentDatagrid() {
                 aria-describedby="alert-dialog-description"
             >
                 <ModalDeleteRestore
-                    establishment={allEstablishments}
-                    selectedEstablishmentId={selectedEstablishmentId}
+                    title="Suppression d'un établissement"
+                    content={`Êtes-vous sûr de vouloir ${
+                        selectedEstablishmentId !== null &&
+                        allEstablishments.find(
+                            (establishment) =>
+                                establishment.establishment_id === selectedEstablishmentId,
+                        )?.deleted_at === null
+                            ? 'supprimer'
+                            : 'restaurer'
+                    } cet établissement ?`}
                     onClose={handleClose}
-                    deleteUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}`} // attention à l'url
-                    restoreUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}/restore`} // attention à l'url
+                    deleteUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}`}
+                    restoreUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}/restore`}
+                    action={
+                        selectedEstablishmentId !== null &&
+                        allEstablishments.find(
+                            (establishment) =>
+                                establishment.establishment_id === selectedEstablishmentId,
+                        )?.deleted_at === null
+                            ? 'delete'
+                            : 'restore'
+                    }
                 />
             </Dialog>
             <EstablishmentValidationForm
