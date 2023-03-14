@@ -3,9 +3,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from '@mui/material';
-import Axios from '../../src/utils/axiosUrl';
+import Axios from '../../utils/axiosUrl';
 import PropTypes from 'prop-types';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 function ModalUpdateUser({ onClose, users, selectedUserId, deleteUrl, restoreUrl }) {
     const { user } = useAuth();

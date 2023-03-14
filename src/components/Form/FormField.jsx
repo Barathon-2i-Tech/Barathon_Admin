@@ -1,6 +1,5 @@
 import { Grid, TextField } from '@mui/material';
 import PropTypes from 'prop-types';
-//import { useAuth } from '../../hooks/useAuth';
 
 export default function FormField({
     gridItem,
@@ -12,8 +11,6 @@ export default function FormField({
     error,
     helperText,
 }) {
-    /*  const { user } = useAuth(); */
-    /*  const isDisabled = user.userLogged.email === value; */
     const isPassword = name === 'password' || name === 'password_confirmation';
 
     return (
@@ -28,7 +25,6 @@ export default function FormField({
                 error={error}
                 helperText={helperText}
                 mb={2}
-                /* disabled={isDisabled} */
                 type={isPassword ? 'password' : 'text'}
             />
         </Grid>

@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import CommonFormFields from './CommonFormFields';
 import * as Yup from 'yup';
 import AdministratorFieldForm from './AdministratorFieldForm';
-import PasswordFieldForm from './PasswordFieldForm';
+import PasswordFieldForm from '../Form/PasswordFieldForm';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 

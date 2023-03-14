@@ -1,6 +1,6 @@
 import Paper from '@mui/material/Paper';
 import Copyright from '../../components/Copyright';
-import UserDatagrid from '../../components/UserDatagrid';
+import UserDatagrid from '../../components/User/UserDatagrid';
 
 export const UsersPage = () => {
     return (
