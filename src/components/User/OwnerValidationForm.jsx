@@ -8,6 +8,23 @@ import PropTypes from 'prop-types';
 import ValidationForm from '../Form/ValidationForm';
 import { errorStatusToast } from '../ToastsUtils';
 
+function UserInformationFromDatabase({ selectedOwner }) {
+    return (
+        <>
+            <ListValidationField label="Nom" value={selectedOwner.last_name} />
+            <ListValidationField label="Prénom" value={selectedOwner.first_name} />
+            <ListValidationField label="Siren" value={selectedOwner.siren} />
+            {selectedOwner.company_name !== null && (
+                <ListValidationField label="Raison sociale" value={selectedOwner.company_name} />
+            )}
+        </>
+    );
+}
+
+UserInformationFromDatabase.propTypes = {
+    selectedOwner: PropTypes.object,
+};
+
 function OwnerValidationForm({ open, selectedOwner, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
@@ -208,22 +225,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         window.open(searchUrl, '_blank');
     };
 
-    function UserInformationFromDatabase() {
-        return (
-            <>
-                <ListValidationField label="Nom" value={selectedOwner.last_name} />
-                <ListValidationField label="Prénom" value={selectedOwner.first_name} />
-                <ListValidationField label="Siren" value={selectedOwner.siren} />
-                {selectedOwner.company_name !== null && (
-                    <ListValidationField
-                        label="Raison sociale"
-                        value={selectedOwner.company_name}
-                    />
-                )}
-            </>
-        );
-    }
-
     useEffect(() => {
         if (open) {
             getDataFromSirenApi();
@@ -236,7 +237,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             <ValidationForm
                 open={open}
                 onClose={onClose}
-                dataFromDatabase={UserInformationFromDatabase}
+                dataFromDatabase={<UserInformationFromDatabase selectedOwner={selectedOwner} />}
                 loading={loading}
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}

@@ -8,6 +8,22 @@ import { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import { errorStatusToast } from '../ToastsUtils';
 
+function EstablishmentInformationFromDatabase({ selectedEstablishment }) {
+    return (
+        <>
+            <ListValidationField label="Siret" value={selectedEstablishment.siret} />
+            <ListValidationField label="Nom" value={selectedEstablishment.trade_name} />
+            <ListValidationField label="Adresse" value={selectedEstablishment.address} />
+            <ListValidationField label="Code postal" value={selectedEstablishment.postal_code} />
+            <ListValidationField label="Ville" value={selectedEstablishment.city} />
+        </>
+    );
+}
+
+EstablishmentInformationFromDatabase.propTypes = {
+    selectedEstablishment: PropTypes.object,
+};
+
 function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
@@ -213,24 +229,6 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
         window.open(searchUrl, '_blank');
     };
 
-    function EstbalishmentInformationFromDatabase() {
-        return (
-            <>
-                <ListValidationField
-                    label="Nom commercial"
-                    value={selectedEstablishment.trade_name}
-                />
-                <ListValidationField label="Siret" value={selectedEstablishment.siret} />
-                <ListValidationField label="Adresse" value={selectedEstablishment.address} />
-                <ListValidationField
-                    label="Code postal"
-                    value={selectedEstablishment.postal_code}
-                />
-                <ListValidationField label="Ville" value={selectedEstablishment.city} />
-            </>
-        );
-    }
-
     useEffect(() => {
         if (open) {
             getDataFromSiretApi();
@@ -243,7 +241,11 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
             <ValidationForm
                 open={open}
                 onClose={onClose}
-                dataFromDatabase={EstbalishmentInformationFromDatabase}
+                dataFromDatabase={
+                    <EstablishmentInformationFromDatabase
+                        selectedEstablishment={selectedEstablishment}
+                    />
+                }
                 loading={loading}
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}

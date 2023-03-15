@@ -50,7 +50,7 @@ function ValidationForm(props) {
                                 </ListSubheader>
                             }
                         >
-                            {dataFromDatabase()}
+                            {dataFromDatabase}
                         </List>
                         {loading === false && (
                             <div>
@@ -104,7 +104,7 @@ function ValidationForm(props) {
 ValidationForm.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    dataFromDatabase: PropTypes.func.isRequired,
+    dataFromDatabase: PropTypes.object.isRequired,
     loading: PropTypes.bool.isRequired,
     dataToDisplay: PropTypes.func.isRequired,
     handleSearch: PropTypes.func.isRequired,
