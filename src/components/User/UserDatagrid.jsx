@@ -231,6 +231,7 @@ function UserDatagrid() {
     const validationSchemaOwner = Yup.object({
         first_name: Yup.string().required('Requis'),
         last_name: Yup.string().required('Requis'),
+        company_name: Yup.string(),
         email: Yup.string().email('Email invalide').required('Requis'),
         phone: Yup.string().max(13, 'Le numéro saisie est invalide').nullable(),
     });
@@ -238,6 +239,7 @@ function UserDatagrid() {
     const ownerInitialValues = {
         first_name: '',
         last_name: '',
+        company_name: '',
         email: '',
         phone: '',
     };
@@ -331,9 +333,9 @@ function UserDatagrid() {
             headerAlign: 'center',
             align: 'center',
             valueGetter: decodeKbis,
-            renderCell: ({ row: { kbis, company_name } }) => {
+            renderCell: ({ row: { kbis, siren } }) => {
                 return (
-                    <a href={kbis} download={`${company_name}_Kbis.pdf`}>
+                    <a href={kbis} download={`${siren}_Kbis.pdf`}>
                         Kbis
                     </a>
                 );

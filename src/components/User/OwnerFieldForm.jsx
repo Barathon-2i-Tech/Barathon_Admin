@@ -9,7 +9,7 @@ function OwnerFieldForm({ formik }) {
                 id="company_name"
                 name="company_name"
                 label="Raison sociale"
-                value={formik.values.company_name}
+                value={formik.values.company_name ? formik.values.company_name : ''}
                 onChange={formik.handleChange}
                 error={formik.touched.company_name && Boolean(formik.errors.company_name)}
                 helperText={formik.touched.company_name && formik.errors.company_name}

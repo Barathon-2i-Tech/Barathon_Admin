@@ -5,3 +5,13 @@ export const errorStatusToast = () => {
         duration: 8000,
     });
 };
+
+export const validationToast = () => {
+    toast.success('Statut mis à jour avec succès', {
+        position: 'top-center',
+        style: {
+            padding: '16px',
+        },
+        icon: '👏',
+    });
+};

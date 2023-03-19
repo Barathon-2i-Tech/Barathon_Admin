@@ -8,8 +8,8 @@ export const EstablishmentsPage = () => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: '80vh',
                 width: '100%',
+                padding: '1rem',
             }}
         >
             <EstablishmentDatagrid />

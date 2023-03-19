@@ -6,7 +6,7 @@ import ListValidationField from '../Form/ListValidationField';
 import { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import ValidationForm from '../Form/ValidationForm';
-import { errorStatusToast } from '../ToastsUtils';
+import { errorStatusToast, validationToast } from '../ToastsUtils';
 
 function UserInformationFromDatabase({ selectedOwner }) {
     return (
@@ -97,7 +97,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     },
                 },
             );
-
+            validationToast();
             onClose();
         } catch (error) {
             console.log(error);
