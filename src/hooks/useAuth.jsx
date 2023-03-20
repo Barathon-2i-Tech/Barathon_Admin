@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import { useLocalStorage } from './useLocalStorage';
+import { useSessionStorage } from './useSessionStorage';
 import Axios from '../utils/axiosUrl';
 
 const AuthContext = createContext();
@@ -19,8 +19,7 @@ const LogoutError = () => {
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
-    <Toaster />;
-    const [user, setUser] = useLocalStorage('user', null);
+    const [user, setUser] = useSessionStorage('user', null);
     const navigate = useNavigate();
 
     const login = async (data) => {
@@ -61,7 +60,12 @@ export const AuthProvider = ({ children }) => {
         [user],
     );
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <>
+            <Toaster />
+            <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        </>
+    );
 };
 
 export const useAuth = () => {

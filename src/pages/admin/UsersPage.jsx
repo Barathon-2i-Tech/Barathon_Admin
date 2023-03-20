@@ -1,18 +1,21 @@
-import GroupIcon from '@mui/icons-material/Group';
 import Paper from '@mui/material/Paper';
-import { BasicPage } from '../../components/BasicPage';
+import Copyright from '../../components/Copyright';
+import UserDatagrid from '../../components/User/UserDatagrid';
 
 export const UsersPage = () => {
     return (
-        <Paper
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '80vh',
-                width: '100%',
-            }}
-        >
-            <BasicPage title="Users Page" icon={<GroupIcon />} />
-        </Paper>
+        <>
+            <Paper
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    padding: '1rem',
+                }}
+            >
+                <UserDatagrid />
+                <Copyright sx={{ pt: 15 }} />
+            </Paper>
+        </>
     );
 };
