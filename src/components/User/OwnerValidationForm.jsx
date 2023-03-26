@@ -32,6 +32,13 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
     const [sirenData, setSirenData] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
 
+    useEffect(() => {
+        if (open) {
+            getDataFromSirenApi();
+            getValidationStatus();
+        }
+    }, [open]);
+
     async function getDataFromSirenApi() {
         try {
             const response = await Axios.api.get(`/check-siren/${selectedOwner.siren}`, {
@@ -41,32 +48,12 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            getValidationStatus();
             setSirenData(response.data.data);
             setLoading(false);
         } catch (error) {
             console.log(error);
-            getValidationStatus();
-            if (error.response) {
-                switch (error.response.status) {
-                    case 404:
-                        setSirenData({
-                            siren: 'notfound',
-                        });
-                        break;
-                    case 429:
-                        setSirenData({
-                            siren: 'tooManyRequests',
-                        });
-                        break;
-                    default:
-                        setSirenData({
-                            siren: 'error',
-                        });
-                        break;
-                }
-            }
             setLoading(false);
+            setSirenData(handleSirenDataError(error));
         }
     }
 
@@ -106,6 +93,19 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         }
     }
 
+    const handleSirenDataError = (error) => {
+        if (error.response) {
+            switch (error.response.status) {
+                case 404:
+                    return { siren: 'notfound' };
+                case 429:
+                    return { siren: 'tooManyRequests' };
+                default:
+                    return { siren: 'error' };
+            }
+        }
+    };
+
     function usualDenomination() {
         const { periodesUniteLegale } = sirenData;
         const {
@@ -123,25 +123,25 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             <>
                 {denominationUsuelleEtablissement && (
                     <ListValidationField
-                        label="Raison sociale"
+                        label="Nom commercial"
                         value={`${denominationUsuelleEtablissement}`}
                     />
                 )}
                 {denominationUsuelle1UniteLegale && (
                     <ListValidationField
-                        label="Raison sociale"
+                        label="Nom commercial"
                         value={`${denominationUsuelle1UniteLegale}`}
                     />
                 )}
                 {denominationUsuelle2UniteLegale && (
                     <ListValidationField
-                        label="Raison sociale (2eme ligne)"
+                        label="Nom commercial (2eme ligne)"
                         value={`${denominationUsuelle2UniteLegale}`}
                     />
                 )}
                 {denominationUsuelle3UniteLegale && (
                     <ListValidationField
-                        label="Raison sociale (3eme ligne)"
+                        label="Nom commercial (3eme ligne)"
                         value={`${denominationUsuelle3UniteLegale}`}
                     />
                 )}
@@ -149,7 +149,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         );
     }
 
-    function dataToDisplay() {
+    const dataToDisplay = () => {
         switch (sirenData.siren) {
             case 'notfound':
                 return (
@@ -170,66 +170,63 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     </Typography>
                 );
             default:
-                if (sirenData.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C') {
-                    return (
-                        <Typography variant="overline" color="error">
-                            Entreprise administrativement fermée <br />
-                        </Typography>
-                    );
-                }
-
-                // personne morale
-                if (sirenData.periodesUniteLegale[0].denominationUniteLegale !== null) {
-                    return (
-                        <>
-                            <Typography variant="overline" sx={{ color: 'green' }}>
-                                Personne morale trouvée
-                            </Typography>
-                            <ListValidationField label="Siren" value={`${sirenData.siren}`} />
-                            <ListValidationField
-                                label="Raison sociale"
-                                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
-                            />
-                            {usualDenomination()}
-                            <ListValidationField
-                                label="Sigle"
-                                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
-                            />
-                        </>
-                    );
-                }
-                //personne physique
-                return (
-                    <>
-                        <Typography variant="overline" sx={{ color: 'green' }}>
-                            Personne physique trouvée
-                        </Typography>
-                        <ListValidationField label="Siren" value={`${sirenData.siren}`} />
-                        {usualDenomination()}
-                        <ListValidationField
-                            label="Nom"
-                            value={`${sirenData.periodesUniteLegale[0].nomUniteLegale}`}
-                        />
-                        <ListValidationField
-                            label="Prénom"
-                            value={`${sirenData.prenomUsuelUniteLegale}`}
-                        />
-                    </>
-                );
+                return sirenData.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C'
+                    ? renderClosedCompanyInfo()
+                    : renderOpenCompanyInfo();
         }
-    }
+    };
+
+    const renderClosedCompanyInfo = () => (
+        <Typography variant="overline" color="error">
+            Entreprise administrativement fermée <br />
+        </Typography>
+    );
+
+    const renderOpenCompanyInfo = () => {
+        if (sirenData.periodesUniteLegale[0].denominationUniteLegale !== null) {
+            return renderLegalPersonInfo();
+        }
+        return renderPhysicalPersonInfo();
+    };
+
+    const renderLegalPersonInfo = () => (
+        <>
+            <Typography variant="overline" sx={{ color: 'green' }}>
+                Personne morale trouvée
+            </Typography>
+            <ListValidationField label="Siren" value={`${sirenData.siren}`} />
+            <ListValidationField
+                label="Raison sociale"
+                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
+            />
+            {usualDenomination()}
+            <ListValidationField
+                label="Sigle"
+                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
+            />
+        </>
+    );
+
+    const renderPhysicalPersonInfo = () => (
+        <>
+            <Typography variant="overline" sx={{ color: 'green' }}>
+                Personne physique trouvée
+            </Typography>
+            <ListValidationField label="Siren" value={`${sirenData.siren}`} />
+            {usualDenomination()}
+            <ListValidationField
+                label="Nom"
+                value={`${sirenData.periodesUniteLegale[0].nomUniteLegale}`}
+            />
+            <ListValidationField label="Prénom" value={`${sirenData.prenomUsuelUniteLegale}`} />
+        </>
+    );
 
     const handleSearch = (event) => {
         event.preventDefault();
         const searchUrl = `https://www.societe.com/cgi-bin/search?champs=${selectedOwner.siren}`;
         window.open(searchUrl, '_blank');
     };
-
-    useEffect(() => {
-        if (open) {
-            getDataFromSirenApi();
-        }
-    }, [open]);
 
     return (
         <>
@@ -253,9 +250,11 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         </>
     );
 }
+
 OwnerValidationForm.propTypes = {
     open: PropTypes.bool.isRequired,
     selectedOwner: PropTypes.object,
     onClose: PropTypes.func.isRequired,
 };
+
 export default OwnerValidationForm;
