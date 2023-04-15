@@ -6,7 +6,7 @@ import ListValidationField from '../Form/ListValidationField';
 import ValidationForm from '../Form/ValidationForm';
 import { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
-import { errorStatusToast, validationToast } from '../ToastsUtils';
+import { errorStatusToast, errorToast, validationToast } from '../ToastsUtils';
 
 function EstablishmentInformationFromDatabase({ selectedEstablishment }) {
     return (
@@ -101,7 +101,11 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
             onClose();
         } catch (error) {
             console.log(error);
-            errorStatusToast();
+            if (error.response.status === 409) {
+                errorStatusToast();
+            } else {
+                errorToast();
+            }
             onClose();
         }
     }
