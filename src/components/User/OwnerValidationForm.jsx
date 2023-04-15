@@ -243,7 +243,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}
                 onClickReject={() => handleValidate(statusFromApi[1].status_id)}
-                onClickPending={() => handleValidate(statusFromApi[2].status_id)}
                 onClickValidate={() => handleValidate(statusFromApi[0].status_id)}
                 disableButton={
                     sirenData.siren === 'notfound' ||

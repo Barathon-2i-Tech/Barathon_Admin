@@ -18,7 +18,6 @@ function ValidationForm(props) {
         dataToDisplay,
         handleSearch,
         onClickReject,
-        onClickPending,
         onClickValidate,
         disableButton,
     } = props;
@@ -88,9 +87,6 @@ function ValidationForm(props) {
                         <Button color="error" onClick={onClickReject}>
                             Refusé
                         </Button>
-                        <Button color="warning" disabled={disableButton} onClick={onClickPending}>
-                            En attente
-                        </Button>
                         <Button color="success" disabled={disableButton} onClick={onClickValidate}>
                             Valider
                         </Button>
@@ -109,7 +105,6 @@ ValidationForm.propTypes = {
     dataToDisplay: PropTypes.func.isRequired,
     handleSearch: PropTypes.func.isRequired,
     onClickReject: PropTypes.func.isRequired,
-    onClickPending: PropTypes.func.isRequired,
     onClickValidate: PropTypes.func.isRequired,
     disableButton: PropTypes.bool.isRequired,
 };

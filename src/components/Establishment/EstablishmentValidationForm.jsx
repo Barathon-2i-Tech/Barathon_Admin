@@ -254,7 +254,6 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}
                 onClickReject={() => handleValidate(statusFromApi[1].status_id)}
-                onClickPending={() => handleValidate(statusFromApi[2].status_id)}
                 onClickValidate={() => handleValidate(statusFromApi[0].status_id)}
                 disableButton={
                     siretData.siret === 'notfound' ||

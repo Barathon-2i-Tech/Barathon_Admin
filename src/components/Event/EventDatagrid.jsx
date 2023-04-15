@@ -7,65 +7,50 @@ import Dialog from '@mui/material/Dialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoneIcon from '@mui/icons-material/Done';
+import { rowCommonDeletedAt, getStatusBackgroundColor } from '../Datagrid/datagridUtils';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModalDeleteRestore from '../ModalDeleteRestore';
-import EstablishmentValidationForm from './EstablishmentValidationForm';
-import { rowCommonDeletedAt, getStatusBackgroundColor } from '../Datagrid/datagridUtils';
 
-function EstablishmentDatagrid() {
+function EventDatagrid() {
     const { user } = useAuth();
     const ApiToken = user.token;
-
-    const [allEstablishments, setAllEstablishments] = useState([]);
-    const [selectedEstablishment, setSelectedEstablishment] = useState(null);
-    const [selectedEstablishmentId, setSelectedEstablishmentId] = useState(null);
-    const [selectedOwnerId, setSelectedOwnerId] = useState(null);
-    const [openEstablishment, setOpenEstablishment] = useState(false);
-    const [openEstablishmentFormValidation, setOpenEstablishmentFormValidation] = useState(false);
+    const [allEvents, setAllEvents] = useState([]);
+    //const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedEventId, setSelectedEventId] = useState(null);
+    const [openEvent, setOpenEvent] = useState(false);
 
     function handleClose() {
-        setOpenEstablishment(false);
-        setOpenEstablishmentFormValidation(false);
+        setOpenEvent(false);
     }
 
-    async function getEstablishments() {
+    async function getEvents() {
         try {
-            const response = await Axios.api.get('/establishments/list', {
+            const response = await Axios.api.get('/events/list', {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            setAllEstablishments(response.data.data);
+            setAllEvents(response.data.data);
         } catch (error) {
             console.log(error);
         }
     }
 
-    const handleCLickOpenEstablishmentVerification = (data) => {
-        setSelectedEstablishment(data);
-        setOpenEstablishmentFormValidation(true);
+    const handleClickOpenEvent = (id) => {
+        setSelectedEventId(id);
+        setOpenEvent(true);
     };
-    const handleClickOpenEstablishment = (id, owner_id) => {
-        setSelectedEstablishmentId(id);
-        setSelectedOwnerId(owner_id);
-        setOpenEstablishment(true);
-    };
-
-    function getMoreReadableSiret(params) {
-        return params.row.siret.replace(/(\d{3})(\d{3})(\d{3})(\d{5})/, '$1 $2 $3 $4');
-    }
-
     function getStatus(params) {
         switch (params.row.status.code) {
-            case 'ESTABL_VALID':
+            case 'EVENT_VALID':
                 return 'Validé';
 
-            case 'ESTABL_REFUSE':
+            case 'EVENT_REFUSE':
                 return 'Refusé';
 
-            case 'ESTABL_PENDING':
+            case 'EVENT_PENDING':
                 return 'En attente';
 
             default:
@@ -73,61 +58,108 @@ function EstablishmentDatagrid() {
         }
     }
 
-    const establishmentRows = allEstablishments.map((establishment) => ({
-        key: establishment.establishment_id,
-        id: establishment.establishment_id,
-        owner_id: establishment.owner_id,
-        trade_name: establishment.trade_name,
-        siret: establishment.siret,
-        phone: establishment.phone,
-        email: establishment.email,
-        address: establishment.address,
-        postal_code: establishment.postal_code,
-        city: establishment.city,
-        status: JSON.parse(establishment.comment),
-        deleted_at: establishment.deleted_at,
+    const eventRows = allEvents.map((event) => ({
+        key: event.event_id,
+        id: event.event_id,
+        event_name: event.event_name,
+        description: event.description,
+        start_event: event.start_event,
+        end_event: event.end_event,
+        poster: event.poster,
+        price: event.price,
+        capacity: event.capacity,
+        establishment_trade_name: event.trade_name,
+        status: JSON.parse(event.comment),
+        deleted_at: event.deleted_at,
     }));
 
-    const establishmentColumns = [
+    const eventColumns = [
         { field: 'id', headerName: 'ID', flex: 0.1, headerAlign: 'center', align: 'center' },
         {
-            field: 'trade_name',
-            headerName: 'Raison sociale',
+            field: 'poster',
+            headerName: 'Affiche',
+            flex: 0.3,
+            headerAlign: 'center',
+            align: 'center',
+            renderCell: (params) => {
+                return (
+                    <img
+                        src={params.value}
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    />
+                );
+            },
+        },
+        {
+            field: 'establishment_trade_name',
+            headerName: 'Organisateur',
             flex: 0.3,
             headerAlign: 'center',
             align: 'center',
         },
         {
-            field: 'siret',
-            headerName: 'SIRET',
-            flex: 0.2,
-            headerAlign: 'center',
-            align: 'center',
-            valueGetter: getMoreReadableSiret,
-        },
-        {
-            field: 'phone',
-            headerName: 'Téléphone',
-            flex: 0.2,
-            headerAlign: 'center',
-            align: 'center',
-        },
-        { field: 'email', headerName: 'Email', flex: 0.3, headerAlign: 'center', align: 'center' },
-        {
-            field: 'address',
-            headerName: 'Adresse',
-            flex: 0.2,
+            field: 'event_name',
+            headerName: "Nom de l'événement",
+            flex: 0.3,
             headerAlign: 'center',
             align: 'center',
         },
         {
-            field: 'postal_code',
-            headerName: 'Code postal',
-            flex: 0.17,
+            field: 'start_event',
+            headerName: "Début de l'événement",
+            flex: 0.3,
             headerAlign: 'center',
             align: 'center',
+            valueGetter: (params) => {
+                const date = new Date(params.row.start_event);
+                return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                })}`;
+            },
         },
-        { field: 'city', headerName: 'Ville', flex: 0.2, headerAlign: 'center', align: 'center' },
+        {
+            field: 'end_event',
+            headerName: "Fin de l'événement",
+            flex: 0.3,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => {
+                const date = new Date(params.row.start_event);
+                return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                })}`;
+            },
+        },
+        {
+            field: 'price',
+            headerName: 'Prix',
+            flex: 0.2,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => (params.row.price ? `${params.row.price} €` : 'Gratuit'),
+            renderCell: ({ value }) => {
+                if (value === 'Gratuit') {
+                    return <strong>{value}</strong>;
+                }
+                return `${value} €`;
+            },
+        },
+        {
+            field: 'capacity',
+            headerName: 'Capacité',
+            flex: 0.2,
+            headerAlign: 'center',
+            align: 'center',
+            valueGetter: (params) => (params.row.capacity ? `${params.row.capacity} ` : 'Illimité'),
+            renderCell: ({ value }) => {
+                if (value === 'Illimité') {
+                    return <strong>{value}</strong>;
+                }
+                return `${value}`;
+            },
+        },
         {
             field: 'status',
             headerName: 'Statut',
@@ -136,7 +168,7 @@ function EstablishmentDatagrid() {
             align: 'center',
             valueGetter: getStatus,
             renderCell: ({ row: { status } }) => {
-                const backgroundColor = getStatusBackgroundColor(status, 'ESTABL');
+                const backgroundColor = getStatusBackgroundColor(status, 'EVENT');
                 return (
                     <Box
                         width="100%"
@@ -168,12 +200,12 @@ function EstablishmentDatagrid() {
                         color="info"
                         size="small"
                         onClick={() => {
-                            handleCLickOpenEstablishmentVerification(params.row);
+                            // handleCLickOpenEstablishmentVerification(params.row);
                         }}
                         startIcon={<DoneIcon />}
                         disabled={
                             params.row.deleted_at !== null ||
-                            params.row.status.code === 'ESTABL_VALID'
+                            params.row.status.code === 'EVENT_VALID'
                         }
                     >
                         Valider
@@ -184,7 +216,7 @@ function EstablishmentDatagrid() {
                         color={params.row.deleted_at === null ? 'error' : 'warning'}
                         size="small"
                         onClick={() => {
-                            handleClickOpenEstablishment(params.row.id, params.row.owner_id);
+                            handleClickOpenEvent(params.row.id);
                         }}
                         startIcon={
                             params.row.deleted_at === null ? (
@@ -202,21 +234,21 @@ function EstablishmentDatagrid() {
     ];
 
     useEffect(() => {
-        getEstablishments();
-    }, [openEstablishment, openEstablishmentFormValidation]);
+        getEvents();
+    }, [openEvent]);
 
     return (
         <div>
             <Box sx={{ height: '70vh', width: '100%' }}>
-                <HeaderDatagrid title="Etablissements" />
+                <HeaderDatagrid title="Evénements" />
                 <DataGrid
-                    rows={establishmentRows}
-                    columns={establishmentColumns}
+                    rows={eventRows}
+                    columns={eventColumns}
                     components={{ Toolbar: GridToolbar }}
                 />
             </Box>
             <Dialog
-                open={openEstablishment}
+                open={openEvent}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
@@ -224,35 +256,26 @@ function EstablishmentDatagrid() {
                 <ModalDeleteRestore
                     title="Suppression d'un établissement"
                     content={`Êtes-vous sûr de vouloir ${
-                        selectedEstablishmentId !== null &&
-                        allEstablishments.find(
-                            (establishment) =>
-                                establishment.establishment_id === selectedEstablishmentId,
-                        )?.deleted_at === null
+                        selectedEventId !== null &&
+                        allEvents.find((event) => event.event_id === selectedEventId)
+                            ?.deleted_at === null
                             ? 'supprimer'
                             : 'restaurer'
-                    } cet établissement ?`}
+                    } cet événement ?`}
                     onClose={handleClose}
-                    deleteUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}`}
-                    restoreUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}/restore`}
+                    deleteUrl={`/pro/event/${selectedEventId}`}
+                    restoreUrl={`/pro/event/${selectedEventId}/restore`}
                     action={
-                        selectedEstablishmentId !== null &&
-                        allEstablishments.find(
-                            (establishment) =>
-                                establishment.establishment_id === selectedEstablishmentId,
-                        )?.deleted_at === null
+                        selectedEventId !== null &&
+                        allEvents.find((event) => event.event_id === selectedEventId)
+                            ?.deleted_at === null
                             ? 'delete'
                             : 'restore'
                     }
                 />
             </Dialog>
-            <EstablishmentValidationForm
-                open={openEstablishmentFormValidation}
-                selectedEstablishment={selectedEstablishment}
-                onClose={handleClose}
-            />
         </div>
     );
 }
 
-export default EstablishmentDatagrid;
+export default EventDatagrid;
