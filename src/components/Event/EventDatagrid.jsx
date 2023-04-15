@@ -10,17 +10,20 @@ import DoneIcon from '@mui/icons-material/Done';
 import { rowCommonDeletedAt, getStatusBackgroundColor } from '../Datagrid/datagridUtils';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModalDeleteRestore from '../ModalDeleteRestore';
+import EventValidationForm from './EventValidationForm';
 
 function EventDatagrid() {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [allEvents, setAllEvents] = useState([]);
-    //const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [selectedEventId, setSelectedEventId] = useState(null);
     const [openEvent, setOpenEvent] = useState(false);
+    const [openEventFormValidation, setOpenEventValidationForm] = useState(false);
 
     function handleClose() {
         setOpenEvent(false);
+        setOpenEventValidationForm(false);
     }
 
     async function getEvents() {
@@ -42,6 +45,12 @@ function EventDatagrid() {
         setSelectedEventId(id);
         setOpenEvent(true);
     };
+
+    const handleClickOpenEventValidation = (data) => {
+        setSelectedEvent(data);
+        setOpenEventValidationForm(true);
+    };
+
     function getStatus(params) {
         switch (params.row.status.code) {
             case 'EVENT_VALID':
@@ -125,7 +134,7 @@ function EventDatagrid() {
             headerAlign: 'center',
             align: 'center',
             valueGetter: (params) => {
-                const date = new Date(params.row.start_event);
+                const date = new Date(params.row.end_event);
                 return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -138,7 +147,12 @@ function EventDatagrid() {
             flex: 0.2,
             headerAlign: 'center',
             align: 'center',
-            valueGetter: (params) => (params.row.price ? `${params.row.price} €` : 'Gratuit'),
+            valueGetter: (params) => {
+                if (params.row.price === null || params.row.price == 0.0) {
+                    return 'Gratuit';
+                }
+                return `${params.row.price} `;
+            },
             renderCell: ({ value }) => {
                 if (value === 'Gratuit') {
                     return <strong>{value}</strong>;
@@ -200,7 +214,7 @@ function EventDatagrid() {
                         color="info"
                         size="small"
                         onClick={() => {
-                            // handleCLickOpenEstablishmentVerification(params.row);
+                            handleClickOpenEventValidation(params.row);
                         }}
                         startIcon={<DoneIcon />}
                         disabled={
@@ -235,7 +249,7 @@ function EventDatagrid() {
 
     useEffect(() => {
         getEvents();
-    }, [openEvent]);
+    }, [openEvent, openEventFormValidation]);
 
     return (
         <div>
@@ -274,6 +288,11 @@ function EventDatagrid() {
                     }
                 />
             </Dialog>
+            <EventValidationForm
+                open={openEventFormValidation}
+                selectedEvent={selectedEvent}
+                onClose={handleClose}
+            />
         </div>
     );
 }
