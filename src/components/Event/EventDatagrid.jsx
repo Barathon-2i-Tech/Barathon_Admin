@@ -115,7 +115,7 @@ function EventDatagrid() {
         },
         {
             field: 'start_event',
-            headerName: "Début de l'événement",
+            headerName: 'Début',
             flex: 0.3,
             headerAlign: 'center',
             align: 'center',
@@ -129,7 +129,7 @@ function EventDatagrid() {
         },
         {
             field: 'end_event',
-            headerName: "Fin de l'événement",
+            headerName: 'Fin',
             flex: 0.3,
             headerAlign: 'center',
             align: 'center',
@@ -177,7 +177,7 @@ function EventDatagrid() {
         {
             field: 'status',
             headerName: 'Statut',
-            flex: 0.2,
+            flex: 0.4,
             headerAlign: 'center',
             align: 'center',
             valueGetter: getStatus,
@@ -209,7 +209,7 @@ function EventDatagrid() {
             renderCell: (params) => (
                 <>
                     <Button
-                        sx={{ marginRight: '10px', px: '40px' }}
+                        sx={{ marginRight: '10px', px: '30px' }}
                         variant="contained"
                         color="info"
                         size="small"
