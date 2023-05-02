@@ -97,7 +97,23 @@ function CategoryDatagrid() {
             },
         },
         { field: 'label', headerName: 'Nom de la catégorie', headerAlign: 'center', flex: 0.5 },
-        { field: 'sub_category', headerName: 'Sous-categorie', headerAlign: 'center', flex: 0.5 },
+        {
+            field: 'sub_category',
+            headerName: 'Sous-categorie',
+            headerAlign: 'center',
+            flex: 0.5,
+            renderCell: (params) => {
+                if (params.value === 'All') {
+                    return 'Etablissement et événement';
+                } else if (params.value === 'Establishment') {
+                    return 'Etablissement';
+                } else if (params.value === 'Event') {
+                    return 'Evénement';
+                } else {
+                    return '';
+                }
+            },
+        },
         rowCommonDeletedAt,
         {
             field: 'action',
