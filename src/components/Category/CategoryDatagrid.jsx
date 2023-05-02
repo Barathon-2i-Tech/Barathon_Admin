@@ -5,7 +5,10 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Axios from '../../utils/axiosUrl';
 import HeaderDatagrid from '../HeaderDatagrid';
 import DeleteIcon from '@mui/icons-material/Delete';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import EditIcon from '@mui/icons-material/Edit';
 import ModalDeleteRestore from '../ModalDeleteRestore';
+import { rowCommonDeletedAt } from '../Datagrid/datagridUtils';
 
 function CategoryDatagrid() {
     const { user } = useAuth();
@@ -50,6 +53,7 @@ function CategoryDatagrid() {
         name: category.category_details.label,
         sub_category: category.category_details.sub_category,
         icon: category.category_details.icon,
+        deleted_at: category.deleted_at,
     }));
 
     const categoryColumns = [
@@ -73,6 +77,7 @@ function CategoryDatagrid() {
         },
         { field: 'name', headerName: 'Nom de la catégorie', headerAlign: 'center', flex: 0.5 },
         { field: 'sub_category', headerName: 'Sous-categorie', headerAlign: 'center', flex: 0.5 },
+        rowCommonDeletedAt,
         {
             field: 'action',
             headerName: 'Action',
@@ -83,16 +88,35 @@ function CategoryDatagrid() {
             renderCell: (params) => (
                 <>
                     <Button
+                        sx={{ marginRight: '10px', px: '20px' }}
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => {
+                            // handleClickOpenBarathonienForm(params.row.id);
+                        }}
+                        startIcon={<EditIcon />}
+                        disabled={params.row.deleted_at !== null}
+                    >
+                        Modifier
+                    </Button>
+                    <Button
                         sx={{ px: '20px' }}
                         variant="contained"
-                        color="error"
+                        color={params.row.deleted_at === null ? 'error' : 'warning'}
                         size="small"
                         onClick={() => {
                             handleClickOpenCategory(params.row.id);
                         }}
-                        startIcon={<DeleteIcon />}
+                        startIcon={
+                            params.row.deleted_at === null ? (
+                                <DeleteIcon />
+                            ) : (
+                                <RestoreFromTrashIcon />
+                            )
+                        }
                     >
-                        Supprimer
+                        {params.row.deleted_at === null ? 'Supprimer' : 'Restaurer'}
                     </Button>
                 </>
             ),
@@ -120,11 +144,26 @@ function CategoryDatagrid() {
                 aria-describedby="alert-dialog-description"
             >
                 <ModalDeleteRestore
+                    title="Gestion des categories"
+                    content={`Êtes-vous sûr de vouloir ${
+                        selectedCategoryId !== null &&
+                        allCategories.find(
+                            (category) => category.category_id === selectedCategoryId,
+                        )?.deleted_at === null
+                            ? 'supprimer'
+                            : 'restaurer'
+                    } cette categorie ?`}
                     onClose={handleClose}
-                    title="Suppression de la catégorie"
-                    content="Voulez-vous vraiment supprimer cette catégorie ?"
-                    action="delete"
                     deleteUrl={`/category/${selectedCategoryId}`}
+                    restoreUrl={`/category/restore/${selectedCategoryId}`}
+                    action={
+                        selectedCategoryId !== null &&
+                        allCategories.find(
+                            (category) => category.category_id === selectedCategoryId,
+                        )?.deleted_at === null
+                            ? 'delete'
+                            : 'restore'
+                    }
                 />
             </Dialog>
         </div>
