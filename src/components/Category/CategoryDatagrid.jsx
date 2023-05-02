@@ -9,6 +9,8 @@ import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
 import ModalDeleteRestore from '../ModalDeleteRestore';
 import { rowCommonDeletedAt } from '../Datagrid/datagridUtils';
+import CategoryForm from './CategoryForm';
+import * as Yup from 'yup';
 
 function CategoryDatagrid() {
     const { user } = useAuth();
@@ -16,6 +18,7 @@ function CategoryDatagrid() {
     const [allCategories, setAllCategories] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [openCategory, setOpenCategory] = useState(false);
+    const [openCategoryForm, setOpenCategoryForm] = useState(false);
 
     async function getCategories() {
         try {
@@ -43,14 +46,32 @@ function CategoryDatagrid() {
         setSelectedCategoryId(id);
         setOpenCategory(true);
     };
+
+    const handleClickOpenTagForm = (id) => {
+        setSelectedCategoryId(id);
+        setOpenCategoryForm(true);
+    };
+
     function handleClose() {
         setOpenCategory(false);
+        setOpenCategoryForm(false);
     }
+    const categoryInitialValues = {
+        label: '',
+        sub_category: '',
+        icon: '',
+    };
+
+    const validationSchemaCategory = Yup.object({
+        label: Yup.string().required('Le nom de la catégorie est obligatoire'),
+        sub_category: Yup.string().required('Requis'),
+        icon: Yup.string(),
+    });
 
     const categoryRows = allCategories.map((category) => ({
         key: category.category_id,
         id: category.category_id,
-        name: category.category_details.label,
+        label: category.category_details.label,
         sub_category: category.category_details.sub_category,
         icon: category.category_details.icon,
         deleted_at: category.deleted_at,
@@ -75,7 +96,7 @@ function CategoryDatagrid() {
                 );
             },
         },
-        { field: 'name', headerName: 'Nom de la catégorie', headerAlign: 'center', flex: 0.5 },
+        { field: 'label', headerName: 'Nom de la catégorie', headerAlign: 'center', flex: 0.5 },
         { field: 'sub_category', headerName: 'Sous-categorie', headerAlign: 'center', flex: 0.5 },
         rowCommonDeletedAt,
         {
@@ -93,7 +114,7 @@ function CategoryDatagrid() {
                         color="primary"
                         size="small"
                         onClick={() => {
-                            // handleClickOpenBarathonienForm(params.row.id);
+                            handleClickOpenTagForm(params.row.id);
                         }}
                         startIcon={<EditIcon />}
                         disabled={params.row.deleted_at !== null}
@@ -125,7 +146,7 @@ function CategoryDatagrid() {
 
     useEffect(() => {
         getCategories();
-    }, [openCategory]);
+    }, [openCategory, openCategoryForm]);
 
     return (
         <div>
@@ -166,6 +187,14 @@ function CategoryDatagrid() {
                     }
                 />
             </Dialog>
+            <CategoryForm
+                open={openCategoryForm}
+                onClose={handleClose}
+                validationSchema={validationSchemaCategory}
+                getCategoryrByIdUrl={`/category/${selectedCategoryId}`}
+                updateCategoryUrl={`/category/${selectedCategoryId}`}
+                initialValues={categoryInitialValues}
+            />
         </div>
     );
 }
