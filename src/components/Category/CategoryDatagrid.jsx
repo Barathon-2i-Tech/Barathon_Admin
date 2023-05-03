@@ -66,7 +66,7 @@ function CategoryDatagrid() {
     }
 
     async function getCategories() {
-        return Axios.api
+        Axios.api
             .get('/categories', {
                 headers: {
                     accept: 'application/vnd.api+json',
@@ -88,6 +88,28 @@ function CategoryDatagrid() {
                 console.log(error);
             });
     }
+
+    /* async function getCategories() {
+        try {
+            const response = await Axios.api.get('/categories', {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            const parsedCategories = response.data.data.map((category) => {
+                const parsedCategoryDetails = JSON.parse(category.category_details);
+                return {
+                    ...category,
+                    category_details: parsedCategoryDetails,
+                };
+            });
+            setAllCategories(parsedCategories);
+        } catch (error) {
+            console.log(error);
+        }
+    } */
 
     const handleClickOpenCategory = (id) => {
         setSelectedCategoryId(id);
