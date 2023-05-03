@@ -82,8 +82,10 @@ function CategoryDatagrid() {
                 };
             });
             setAllCategories(parsedCategories);
+            return parsedCategories;
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 
