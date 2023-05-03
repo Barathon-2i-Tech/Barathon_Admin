@@ -82,10 +82,8 @@ function CategoryDatagrid() {
                 };
             });
             setAllCategories(parsedCategories);
-            return parsedCategories;
         } catch (error) {
             console.log(error);
-            throw error;
         }
     }
 
@@ -210,7 +208,15 @@ function CategoryDatagrid() {
     ];
 
     useEffect(() => {
-        getCategories();
+        const fetchData = async () => {
+            try {
+                await getCategories();
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
     }, [openCategory, openCategoryForm, openNewCategoryForm]);
 
     return (
