@@ -66,25 +66,27 @@ function CategoryDatagrid() {
     }
 
     async function getCategories() {
-        try {
-            const response = await Axios.api.get('/categories', {
+        return Axios.api
+            .get('/categories', {
                 headers: {
                     accept: 'application/vnd.api+json',
                     'Content-Type': 'application/vnd.api+json',
                     Authorization: `Bearer ${ApiToken}`,
                 },
+            })
+            .then((response) => {
+                const parsedCategories = response.data.data.map((category) => {
+                    const parsedCategoryDetails = JSON.parse(category.category_details);
+                    return {
+                        ...category,
+                        category_details: parsedCategoryDetails,
+                    };
+                });
+                setAllCategories(parsedCategories);
+            })
+            .catch((error) => {
+                console.log(error);
             });
-            const parsedCategories = response.data.data.map((category) => {
-                const parsedCategoryDetails = JSON.parse(category.category_details);
-                return {
-                    ...category,
-                    category_details: parsedCategoryDetails,
-                };
-            });
-            setAllCategories(parsedCategories);
-        } catch (error) {
-            console.log(error);
-        }
     }
 
     const handleClickOpenCategory = (id) => {
@@ -208,15 +210,7 @@ function CategoryDatagrid() {
     ];
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await getCategories();
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchData();
+        getCategories();
     }, [openCategory, openCategoryForm, openNewCategoryForm]);
 
     return (
