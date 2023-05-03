@@ -1,16 +1,25 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { Box, Button, Dialog } from '@mui/material';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Axios from '../../utils/axiosUrl';
-import HeaderDatagrid from '../HeaderDatagrid';
+import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import EditIcon from '@mui/icons-material/Edit';
-import ModalDeleteRestore from '../ModalDeleteRestore';
-import { rowCommonDeletedAt } from '../Datagrid/datagridUtils';
-import CategoryForm from './CategoryForm';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import { Box, Button, Dialog, styled } from '@mui/material';
+import {
+    DataGrid,
+    GridToolbarColumnsButton,
+    GridToolbarContainer,
+    GridToolbarDensitySelector,
+    GridToolbarExport,
+    GridToolbarFilterButton,
+} from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
+import { useAuth } from '../../hooks/useAuth';
+import Axios from '../../utils/axiosUrl';
+import { rowCommonDeletedAt } from '../Datagrid/datagridUtils';
+import HeaderDatagrid from '../HeaderDatagrid';
+import ModalDeleteRestore from '../ModalDeleteRestore';
+import CategoryForm from './CategoryForm';
+import NewCategoryForm from './NewCategoryForm';
 
 function CategoryDatagrid() {
     const { user } = useAuth();
@@ -19,6 +28,42 @@ function CategoryDatagrid() {
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [openCategory, setOpenCategory] = useState(false);
     const [openCategoryForm, setOpenCategoryForm] = useState(false);
+    const [openNewCategoryForm, setOpenNewCategoryForm] = useState(false);
+
+    const RightAlignedContainer = styled(GridToolbarContainer)({
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        '& .right-align': {
+            marginLeft: 'auto',
+        },
+    });
+
+    const handleClickOpenNewCategory = () => {
+        setOpenNewCategoryForm(true);
+    };
+
+    function categoryCustomToolbar() {
+        return (
+            <RightAlignedContainer>
+                <div>
+                    <GridToolbarColumnsButton />
+                    <GridToolbarFilterButton />
+                    <GridToolbarDensitySelector />
+                    <GridToolbarExport />
+                </div>
+                <Button
+                    variant="contained"
+                    size="small"
+                    className="right-align"
+                    startIcon={<AddIcon />}
+                    onClick={handleClickOpenNewCategory}
+                >
+                    Créer une catégorie
+                </Button>
+            </RightAlignedContainer>
+        );
+    }
 
     async function getCategories() {
         try {
@@ -55,7 +100,9 @@ function CategoryDatagrid() {
     function handleClose() {
         setOpenCategory(false);
         setOpenCategoryForm(false);
+        setOpenNewCategoryForm(false);
     }
+
     const categoryInitialValues = {
         label: '',
         sub_category: '',
@@ -162,7 +209,7 @@ function CategoryDatagrid() {
 
     useEffect(() => {
         getCategories();
-    }, [openCategory, openCategoryForm]);
+    }, [openCategory, openCategoryForm, openNewCategoryForm]);
 
     return (
         <div>
@@ -171,7 +218,7 @@ function CategoryDatagrid() {
                 <DataGrid
                     rows={categoryRows}
                     columns={categoryColumns}
-                    components={{ Toolbar: GridToolbar }}
+                    components={{ Toolbar: categoryCustomToolbar }}
                 />
             </Box>
             <Dialog
@@ -211,6 +258,7 @@ function CategoryDatagrid() {
                 updateCategoryUrl={`/category/${selectedCategoryId}`}
                 initialValues={categoryInitialValues}
             />
+            <NewCategoryForm open={openNewCategoryForm} onClose={handleClose} />
         </div>
     );
 }
