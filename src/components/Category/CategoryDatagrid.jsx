@@ -1,6 +1,9 @@
 import AddIcon from '@mui/icons-material/Add';
+
 import DeleteIcon from '@mui/icons-material/Delete';
+
 import EditIcon from '@mui/icons-material/Edit';
+
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import { Box, Button, Dialog, styled } from '@mui/material';
 import {
@@ -64,52 +67,6 @@ function CategoryDatagrid() {
             </RightAlignedContainer>
         );
     }
-
-    async function getCategories() {
-        Axios.api
-            .get('/categories', {
-                headers: {
-                    accept: 'application/vnd.api+json',
-                    'Content-Type': 'application/vnd.api+json',
-                    Authorization: `Bearer ${ApiToken}`,
-                },
-            })
-            .then((response) => {
-                const parsedCategories = response.data.data.map((category) => {
-                    const parsedCategoryDetails = JSON.parse(category.category_details);
-                    return {
-                        ...category,
-                        category_details: parsedCategoryDetails,
-                    };
-                });
-                setAllCategories(parsedCategories);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-
-    /* async function getCategories() {
-        try {
-            const response = await Axios.api.get('/categories', {
-                headers: {
-                    accept: 'application/vnd.api+json',
-                    'Content-Type': 'application/vnd.api+json',
-                    Authorization: `Bearer ${ApiToken}`,
-                },
-            });
-            const parsedCategories = response.data.data.map((category) => {
-                const parsedCategoryDetails = JSON.parse(category.category_details);
-                return {
-                    ...category,
-                    category_details: parsedCategoryDetails,
-                };
-            });
-            setAllCategories(parsedCategories);
-        } catch (error) {
-            console.log(error);
-        }
-    } */
 
     const handleClickOpenCategory = (id) => {
         setSelectedCategoryId(id);
@@ -232,7 +189,29 @@ function CategoryDatagrid() {
     ];
 
     useEffect(() => {
-        getCategories().catch(console.error());
+        async function getCategories() {
+            try {
+                const response = await Axios.api.get('/categories', {
+                    headers: {
+                        accept: 'application/vnd.api+json',
+                        'Content-Type': 'application/vnd.api+json',
+                        Authorization: `Bearer ${ApiToken}`,
+                    },
+                });
+                const parsedCategories = response.data.data.map((category) => {
+                    const parsedCategoryDetails = JSON.parse(category.category_details);
+                    return {
+                        ...category,
+                        category_details: parsedCategoryDetails,
+                    };
+                });
+                setAllCategories(parsedCategories);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getCategories();
     }, [openCategory, openCategoryForm, openNewCategoryForm]);
 
     return (
