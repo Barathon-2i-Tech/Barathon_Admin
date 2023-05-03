@@ -33,6 +33,28 @@ function CategoryDatagrid() {
     const [openCategoryForm, setOpenCategoryForm] = useState(false);
     const [openNewCategoryForm, setOpenNewCategoryForm] = useState(false);
 
+    async function getCategories() {
+        try {
+            const response = await Axios.api.get('/categories', {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            const parsedCategories = response.data.data.map((category) => {
+                const parsedCategoryDetails = JSON.parse(category.category_details);
+                return {
+                    ...category,
+                    category_details: parsedCategoryDetails,
+                };
+            });
+            setAllCategories(parsedCategories);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const RightAlignedContainer = styled(GridToolbarContainer)({
         display: 'flex',
         justifyContent: 'space-between',
@@ -189,28 +211,6 @@ function CategoryDatagrid() {
     ];
 
     useEffect(() => {
-        async function getCategories() {
-            try {
-                const response = await Axios.api.get('/categories', {
-                    headers: {
-                        accept: 'application/vnd.api+json',
-                        'Content-Type': 'application/vnd.api+json',
-                        Authorization: `Bearer ${ApiToken}`,
-                    },
-                });
-                const parsedCategories = response.data.data.map((category) => {
-                    const parsedCategoryDetails = JSON.parse(category.category_details);
-                    return {
-                        ...category,
-                        category_details: parsedCategoryDetails,
-                    };
-                });
-                setAllCategories(parsedCategories);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
         getCategories();
     }, [openCategory, openCategoryForm, openNewCategoryForm]);
 
