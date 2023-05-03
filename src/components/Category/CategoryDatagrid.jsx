@@ -232,7 +232,7 @@ function CategoryDatagrid() {
     ];
 
     useEffect(() => {
-        getCategories();
+        getCategories().catch(console.error());
     }, [openCategory, openCategoryForm, openNewCategoryForm]);
 
     return (
