@@ -6,7 +6,7 @@ import ListValidationField from '../Form/ListValidationField';
 import { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import ValidationForm from '../Form/ValidationForm';
-import { errorStatusToast, validationToast } from '../ToastsUtils';
+import { errorStatusToast, errorToast, validationToast } from '../ToastsUtils';
 
 function UserInformationFromDatabase({ selectedOwner }) {
     return (
@@ -88,7 +88,11 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
             onClose();
         } catch (error) {
             console.log(error);
-            errorStatusToast();
+            if (error.response.status === 409) {
+                errorStatusToast();
+            } else {
+                errorToast();
+            }
             onClose();
         }
     }
@@ -239,7 +243,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}
                 onClickReject={() => handleValidate(statusFromApi[1].status_id)}
-                onClickPending={() => handleValidate(statusFromApi[2].status_id)}
                 onClickValidate={() => handleValidate(statusFromApi[0].status_id)}
                 disableButton={
                     sirenData.siren === 'notfound' ||

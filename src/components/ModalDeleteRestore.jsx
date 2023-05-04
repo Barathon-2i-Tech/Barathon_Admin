@@ -55,7 +55,7 @@ ModalDeleteRestore.propTypes = {
     onClose: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     deleteUrl: PropTypes.string.isRequired,
-    restoreUrl: PropTypes.string.isRequired,
+    restoreUrl: PropTypes.string,
     content: PropTypes.string.isRequired,
     action: PropTypes.string.isRequired,
 };

@@ -1,6 +1,6 @@
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import Paper from '@mui/material/Paper';
-import { BasicPage } from '../../components/BasicPage';
+import EventDatagrid from '../../components/Event/EventDatagrid';
+import Copyright from '../../components/Copyright';
 
 export const EventsPage = () => {
     return (
@@ -8,11 +8,12 @@ export const EventsPage = () => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: '80vh',
                 width: '100%',
+                padding: '1rem',
             }}
         >
-            <BasicPage title="Event Page" icon={<ConfirmationNumberIcon />} />
+            <EventDatagrid />
+            <Copyright sx={{ pt: 15 }} />
         </Paper>
     );
 };

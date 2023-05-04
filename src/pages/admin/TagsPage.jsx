@@ -1,6 +1,6 @@
-import TagIcon from '@mui/icons-material/Tag';
 import Paper from '@mui/material/Paper';
-import { BasicPage } from '../../components/BasicPage';
+import Copyright from '../../components/Copyright';
+import CategoryDatagrid from '../../components/Category/CategoryDatagrid';
 
 export const TagsPage = () => {
     return (
@@ -8,11 +8,12 @@ export const TagsPage = () => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: '80vh',
                 width: '100%',
+                padding: '1rem',
             }}
         >
-            <BasicPage title="Tags Page" icon={<TagIcon />} />
+            <CategoryDatagrid />
+            <Copyright sx={{ pt: 15 }} />
         </Paper>
     );
 };

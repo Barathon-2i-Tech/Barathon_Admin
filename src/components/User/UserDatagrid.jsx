@@ -630,7 +630,7 @@ function UserDatagrid() {
     return (
         <>
             <div>
-                <Box sx={{ height: 400, width: '100%' }}>
+                <Box sx={{ height: '600px', width: '100%' }}>
                     <HeaderDatagrid title="Barathoniens" />
                     <DataGrid
                         rows={barathoniensRows}
@@ -677,7 +677,7 @@ function UserDatagrid() {
                 />
             </div>
             <div style={{ marginTop: '100px' }}>
-                <Box sx={{ height: 400, width: '100%' }}>
+                <Box sx={{ height: '600px', width: '100%' }}>
                     <HeaderDatagrid title="Professionnels" />
                     <DataGrid
                         rows={ownersRows}
@@ -727,7 +727,7 @@ function UserDatagrid() {
                 />
             </div>
             <div style={{ marginTop: '100px' }}>
-                <Box sx={{ height: 400, width: '100%' }}>
+                <Box sx={{ height: '400px', width: '100%' }}>
                     <HeaderDatagrid title="Administrateurs" />
                     <DataGrid
                         rows={administratorsRows}

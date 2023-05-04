@@ -10,6 +10,7 @@ function ValidationBanner() {
 
     const [numberOwnerToValidate, setNumberOwnerToValidate] = useState(0);
     const [numberEstablishmentToValidate, setNumberEstablishmentToValidate] = useState(0);
+    const [numberEventToValidate, setNumberEventToValidate] = useState(0);
 
     async function getNumberOwnerToValidate() {
         try {
@@ -39,10 +40,25 @@ function ValidationBanner() {
             console.log(error);
         }
     }
+    async function getNumberEventToValidate() {
+        try {
+            const response = await Axios.api.get('/admin/event-to-validate', {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            setNumberEventToValidate(response.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         getNumberOwnerToValidate();
         getNumberEstablishmentToValidate();
+        getNumberEventToValidate();
     }, []);
 
     return (
@@ -52,6 +68,7 @@ function ValidationBanner() {
                 title="Etablissement(s) à valider :"
                 value={numberEstablishmentToValidate}
             />
+            <ValidationCounter title="Evénement(s) à valider :" value={numberEventToValidate} />
         </Box>
     );
 }

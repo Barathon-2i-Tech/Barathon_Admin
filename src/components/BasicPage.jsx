@@ -19,6 +19,8 @@ export const BasicPage = ({ title, icon }) => {
                 <Typography component="h1" variant="h5">
                     {title}
                 </Typography>
+                <br />
+                Page en cours de construction
             </Box>
         </Container>
     );

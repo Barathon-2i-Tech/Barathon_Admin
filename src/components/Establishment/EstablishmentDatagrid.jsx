@@ -207,7 +207,7 @@ function EstablishmentDatagrid() {
 
     return (
         <div>
-            <Box sx={{ height: 400, width: '100%' }}>
+            <Box sx={{ height: '70vh', width: '100%' }}>
                 <HeaderDatagrid title="Etablissements" />
                 <DataGrid
                     rows={establishmentRows}
