@@ -1,21 +1,39 @@
-import { useEffect, useState } from 'react';
-import Axios from '../../utils/axiosUrl';
-import { useAuth } from '../../hooks/useAuth';
-import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Button from '@mui/material/Button';
-import { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
-import { errorStatusToast, errorToast, validationToast } from '../ToastsUtils';
+import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { useAuth } from '../../hooks/useAuth';
+import Axios from '../../utils/axiosUrl';
 import ListValidationField from '../Form/ListValidationField';
+import { errorStatusToast, errorToast, validationToast } from '../ToastsUtils';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { AccordionDetails, Box } from '@mui/material';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
 
 function EventValidationForm({ open, selectedEvent, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
     const [eventStatusFromApi, setEventStatusFromApi] = useState({});
+    const [eventHistory, setEventHistory] = useState([]);
+
+    function formatDate(data) {
+        let dateToFormat = new Date(data);
+        dateToFormat =
+            dateToFormat.toLocaleDateString() +
+            ' ' +
+            dateToFormat.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+        return dateToFormat;
+    }
 
     function EventInformationFromDatabase({ selectedEvent }) {
         const {
@@ -28,17 +46,22 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
             capacity,
             poster,
         } = selectedEvent;
+
         return (
             <>
-                <img src={poster} alt="image de l'événement" style={{ width: '100%' }} />
+                <img
+                    src={poster}
+                    alt="image de l'événement"
+                    style={{ maxWidth: '80%', margin: 'auto', display: 'block' }}
+                />
                 <ListValidationField
                     label="Etablissement organisateur"
                     value={establishment_trade_name}
                 />
                 <ListValidationField label="Nom de l'événement" value={event_name} />
                 <ListValidationField label="Description" value={description} />
-                <ListValidationField label="Début de l'évenement" value={start_event} />
-                <ListValidationField label="Fin de l'évenement" value={end_event} />
+                <ListValidationField label="Début de l'évenement" value={formatDate(start_event)} />
+                <ListValidationField label="Fin de l'évenement" value={formatDate(end_event)} />
                 <ListValidationField
                     label="Prix"
                     value={price === null || price == 0.0 ? 'gratuit' : price + ' €'}
@@ -48,9 +71,72 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         );
     }
 
+    function eventHistoryFromApi() {
+        return (
+            <>
+                <Accordion TransitionProps={{ unmountOnExit: true }}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography color={'primary'}>Historique de l&apos;événement</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {eventHistory.slice(1).map((historyItem, index) => (
+                            <div key={index}>
+                                <Box padding={'20px'} borderBottom={'2px solid'}>
+                                    <img
+                                        src={historyItem.poster}
+                                        alt="image de l'événement"
+                                        style={{
+                                            width: '50%',
+                                            margin: 'auto',
+                                            display: 'block',
+                                            paddingBottom: '10px',
+                                        }}
+                                    />
+                                    <ListValidationField
+                                        label="Nom de l'événement"
+                                        value={historyItem.event_name}
+                                    />
+                                    <ListValidationField
+                                        label="Description"
+                                        value={historyItem.description}
+                                    />
+                                    <ListValidationField
+                                        label="Début de l'évenement"
+                                        value={formatDate(historyItem.start_event)}
+                                    />
+                                    <ListValidationField
+                                        label="Fin de l'évenement"
+                                        value={formatDate(historyItem.end_event)}
+                                    />
+                                    <ListValidationField
+                                        label="Prix"
+                                        value={
+                                            historyItem.price === null || historyItem.price == 0.0
+                                                ? 'gratuit'
+                                                : historyItem.price + ' €'
+                                        }
+                                    />
+                                    <ListValidationField
+                                        label="Nombre de place"
+                                        value={historyItem.capacity || 'illimité'}
+                                    />
+                                </Box>
+                            </div>
+                        ))}
+                    </AccordionDetails>
+                </Accordion>
+            </>
+        );
+    }
+
     useEffect(() => {
         if (open) {
             getValidationStatus();
+            getEventWithHistory();
         }
     }, [open]);
 
@@ -64,6 +150,21 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                 },
             });
             setEventStatusFromApi(response.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function getEventWithHistory() {
+        try {
+            const response = await Axios.api.get(`/admin/event/${selectedEvent.id}/history`, {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+            setEventHistory(response.data.data);
         } catch (error) {
             console.log(error);
         }
@@ -100,6 +201,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                     {selectedEvent && (
                         <EventInformationFromDatabase selectedEvent={selectedEvent} />
                     )}
+                    {eventHistoryFromApi()}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose}>Annuler</Button>
