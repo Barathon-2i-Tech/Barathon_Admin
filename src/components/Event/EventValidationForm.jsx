@@ -72,6 +72,10 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
     }
 
     function eventHistoryFromApi() {
+        if (eventHistory.length <= 1) {
+            return null;
+        }
+
         return (
             <>
                 <Accordion TransitionProps={{ unmountOnExit: true }}>
