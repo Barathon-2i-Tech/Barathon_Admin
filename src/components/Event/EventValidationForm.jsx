@@ -10,7 +10,7 @@ import { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
 import Axios from '../../utils/axiosUrl';
 import ListValidationField from '../Form/ListValidationField';
-import { errorStatusToast, errorToast, validationToast } from '../ToastsUtils';
+import { errorStatusToast, validationToast } from '../ToastsUtils';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AccordionDetails, Box } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
@@ -33,6 +33,20 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                 minute: '2-digit',
             });
         return dateToFormat;
+    }
+
+    async function validationMail(validationCode) {
+        try {
+            await Axios.api.get(`pro/mail/valide/event/${selectedEvent.userId}/${validationCode}`, {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function EventInformationFromDatabase({ selectedEvent }) {
@@ -190,7 +204,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
             if (error.response.status === 409) {
                 errorStatusToast();
             } else {
-                errorToast();
+                console.log(error);
             }
             onClose();
         }
@@ -213,13 +227,20 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                     <ButtonGroup variant="contained">
                         <Button
                             color="error"
-                            onClick={() => handleValidate(eventStatusFromApi[1].status_id)}
+                            onClick={() => {
+                                console.log(selectedEvent);
+                                handleValidate(eventStatusFromApi[1].status_id);
+                                validationMail(1);
+                            }}
                         >
                             Refusé
                         </Button>
                         <Button
                             color="success"
-                            onClick={() => handleValidate(eventStatusFromApi[0].status_id)}
+                            onClick={() => {
+                                handleValidate(eventStatusFromApi[0].status_id);
+                                validationMail(0);
+                            }}
                         >
                             Valider
                         </Button>

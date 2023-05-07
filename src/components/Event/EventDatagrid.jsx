@@ -80,6 +80,7 @@ function EventDatagrid() {
         establishment_trade_name: event.trade_name,
         status: JSON.parse(event.comment),
         deleted_at: event.deleted_at,
+        userId: event.user_id,
     }));
 
     const eventColumns = [
