@@ -17,6 +17,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 
+
 function EventValidationForm({ open, selectedEvent, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
@@ -49,6 +50,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         }
     }
 
+
     function EventInformationFromDatabase({ selectedEvent }) {
         const {
             establishment_trade_name,
@@ -61,6 +63,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
             poster,
         } = selectedEvent;
 
+
         return (
             <>
                 <img
@@ -68,6 +71,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                     alt="image de l'événement"
                     style={{ maxWidth: '80%', margin: 'auto', display: 'block' }}
                 />
+
                 <ListValidationField
                     label="Etablissement organisateur"
                     value={establishment_trade_name}
@@ -76,6 +80,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                 <ListValidationField label="Description" value={description} />
                 <ListValidationField label="Début de l'évenement" value={formatDate(start_event)} />
                 <ListValidationField label="Fin de l'évenement" value={formatDate(end_event)} />
+
                 <ListValidationField
                     label="Prix"
                     value={price === null || price == 0.0 ? 'gratuit' : price + ' €'}
@@ -155,6 +160,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         if (open) {
             getValidationStatus();
             getEventWithHistory();
+
         }
     }, [open]);
 
@@ -173,6 +179,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         }
     }
 
+
     async function getEventWithHistory() {
         try {
             const response = await Axios.api.get(`/admin/event/${selectedEvent.id}/history`, {
@@ -187,6 +194,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
             console.log(error);
         }
     }
+
 
     async function handleValidate(validationStatus) {
         const status = parseInt(validationStatus);
@@ -220,6 +228,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                         <EventInformationFromDatabase selectedEvent={selectedEvent} />
                     )}
                     {eventHistoryFromApi()}
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose}>Annuler</Button>
@@ -232,6 +241,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                                 handleValidate(eventStatusFromApi[1].status_id);
                                 validationMail(1);
                             }}
+
                         >
                             Refusé
                         </Button>
@@ -241,6 +251,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                                 handleValidate(eventStatusFromApi[0].status_id);
                                 validationMail(0);
                             }}
+
                         >
                             Valider
                         </Button>
