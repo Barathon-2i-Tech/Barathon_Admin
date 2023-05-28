@@ -8,6 +8,7 @@ import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import PropTypes from 'prop-types';
+import { Typography } from '@mui/material';
 
 function ValidationForm(props) {
     const {
@@ -20,12 +21,13 @@ function ValidationForm(props) {
         onClickReject,
         onClickValidate,
         disableButton,
+        local,
     } = props;
 
     return (
         <>
             <Dialog open={open} onClose={onClose} aria-labelledby="alert-dialog-title">
-                <DialogTitle id="alert-dialog-title">{'Verification de la conformité'}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{'Vérification de la conformité'}</DialogTitle>
                 {loading ? (
                     <DialogContent
                         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
@@ -35,7 +37,7 @@ function ValidationForm(props) {
                 ) : (
                     <DialogContent>
                         <List
-                            sx={{ width: '100%', maxWidth: 800 }}
+                            sx={{ width: '100%', maxWidth: '800px' }}
                             component="div"
                             aria-labelledby="nested-list-subheader"
                             subheader={
@@ -45,7 +47,7 @@ function ValidationForm(props) {
                                     color="primary"
                                     sx={{ fontWeight: 'bold' }}
                                 >
-                                    Données saisie par l&apos;utilisateur
+                                    👤 Données saisie par l&apos;utilisateur
                                 </ListSubheader>
                             }
                         >
@@ -56,7 +58,7 @@ function ValidationForm(props) {
                                 <List
                                     sx={{
                                         width: '100%',
-                                        maxWidth: 800,
+                                        maxWidth: '800px',
                                     }}
                                     component="div"
                                     aria-labelledby="nested-list-subheader"
@@ -67,7 +69,8 @@ function ValidationForm(props) {
                                             color="primary"
                                             sx={{ fontWeight: 'bold' }}
                                         >
-                                            Données provenant de l&apos;INSEE
+                                            🔎 Données provenant de{' '}
+                                            {local ? 'la base de données locale' : "l'INSEE"}
                                         </ListSubheader>
                                     }
                                 >
@@ -75,6 +78,11 @@ function ValidationForm(props) {
                                 </List>
                             </div>
                         )}
+                        <br />
+                        <Typography variant="caption">
+                            ⚠️ Attention <b>[ND]</b> signifie <b>non diffusable</b>
+                        </Typography>
+                        <br />
                         <Button variant="contained" onClick={handleSearch}>
                             Plus d&lsquo;informations sur Societe.com
                         </Button>
@@ -107,6 +115,7 @@ ValidationForm.propTypes = {
     onClickReject: PropTypes.func.isRequired,
     onClickValidate: PropTypes.func.isRequired,
     disableButton: PropTypes.bool.isRequired,
+    local: PropTypes.bool,
 };
 
 export default ValidationForm;

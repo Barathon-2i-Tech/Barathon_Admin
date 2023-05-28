@@ -48,6 +48,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
+            console.log(response);
             setSirenData(response.data.data);
             setLoading(false);
         } catch (error) {
@@ -110,49 +111,211 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         }
     };
 
-    function usualDenomination() {
-        const { periodesUniteLegale } = sirenData;
-        const {
-            denominationUsuelle1UniteLegale,
-            denominationUsuelleEtablissement,
-            denominationUsuelle2UniteLegale,
-            denominationUsuelle3UniteLegale,
-        } = periodesUniteLegale[0];
+    const renderClosedCompanyInfo = () => (
+        <Typography variant="overline" color="error">
+            Entreprise administrativement fermée <br />
+        </Typography>
+    );
 
-        if (!denominationUsuelle1UniteLegale && !denominationUsuelleEtablissement) {
-            return null;
+    const renderOpenCompanyInfo = () => {
+        if (sirenData.response.sexeUniteLegale === null) {
+            return renderLegalPersonInfo();
         }
+        return renderPhysicalPersonInfo();
+    };
 
+    const renderLegalPersonInfo = () => (
+        <>
+            <Typography variant="overline" sx={{ color: 'green' }}>
+                Personne morale trouvée
+            </Typography>
+            <ListValidationField label="Siren" value={`${sirenData.response.siren}`} />
+            <ListValidationField
+                label="Raison sociale"
+                value={
+                    sirenData.local
+                        ? `${sirenData.response.denominationUniteLegale}`
+                        : `${sirenData.response.periodesUniteLegale[0].denominationUniteLegale}`
+                }
+            />
+            {usualDenomination()}
+            {addressCompany()}
+        </>
+    );
+
+    const renderPhysicalPersonInfo = () => {
         return (
             <>
-                {denominationUsuelleEtablissement && (
-                    <ListValidationField
-                        label="Nom commercial"
-                        value={`${denominationUsuelleEtablissement}`}
-                    />
-                )}
-                {denominationUsuelle1UniteLegale && (
-                    <ListValidationField
-                        label="Nom commercial"
-                        value={`${denominationUsuelle1UniteLegale}`}
-                    />
-                )}
-                {denominationUsuelle2UniteLegale && (
-                    <ListValidationField
-                        label="Nom commercial (2eme ligne)"
-                        value={`${denominationUsuelle2UniteLegale}`}
-                    />
-                )}
-                {denominationUsuelle3UniteLegale && (
-                    <ListValidationField
-                        label="Nom commercial (3eme ligne)"
-                        value={`${denominationUsuelle3UniteLegale}`}
-                    />
-                )}
+                <Typography variant="overline" sx={{ color: 'green' }}>
+                    Personne physique trouvée
+                </Typography>
+                <ListValidationField label="Siren" value={`${sirenData.response.siren}`} />
+                <ListValidationField
+                    label="Nom"
+                    value={
+                        sirenData.local
+                            ? `${sirenData.response.nomUniteLegale}`
+                            : `${sirenData.response.periodesUniteLegale[0].nomUniteLegale}`
+                    }
+                />
+                <ListValidationField
+                    label="Prénom"
+                    value={`${sirenData.response.prenom1UniteLegale}`}
+                />
+                {usualDenomination()}
+                {addressCompany()}
             </>
         );
-    }
+    };
 
+    const usualDenomination = () => {
+        if (sirenData.local) {
+            const {
+                denominationUsuelleEtablissement,
+                denominationUsuelle1UniteLegale,
+                denominationUsuelle2UniteLegale,
+                denominationUsuelle3UniteLegale,
+            } = sirenData.response;
+
+            if (!denominationUsuelle1UniteLegale && !denominationUsuelleEtablissement) {
+                return null;
+            }
+
+            return (
+                <>
+                    {denominationUsuelleEtablissement && (
+                        <ListValidationField
+                            label="Nom commercial"
+                            value={`${denominationUsuelleEtablissement}`}
+                        />
+                    )}
+                    {denominationUsuelle1UniteLegale && (
+                        <ListValidationField
+                            label="Nom commercial"
+                            value={`${denominationUsuelle1UniteLegale}`}
+                        />
+                    )}
+                    {denominationUsuelle2UniteLegale && (
+                        <ListValidationField
+                            label="Nom commercial (2eme ligne)"
+                            value={`${denominationUsuelle2UniteLegale}`}
+                        />
+                    )}
+                    {denominationUsuelle3UniteLegale && (
+                        <ListValidationField
+                            label="Nom commercial (3eme ligne)"
+                            value={`${denominationUsuelle3UniteLegale}`}
+                        />
+                    )}
+                </>
+            );
+        } else {
+            const { denominationUsuelle1UniteLegale, denominationUsuelleEtablissement } =
+                sirenData.response.periodesUniteLegale[0];
+
+            if (!denominationUsuelle1UniteLegale && !denominationUsuelleEtablissement) {
+                return null;
+            }
+
+            return (
+                <>
+                    {denominationUsuelleEtablissement && (
+                        <ListValidationField
+                            label="Nom commercial"
+                            value={`${denominationUsuelleEtablissement}`}
+                        />
+                    )}
+                    {denominationUsuelle1UniteLegale && (
+                        <ListValidationField
+                            label="Nom commercial"
+                            value={`${denominationUsuelle1UniteLegale}`}
+                        />
+                    )}
+                </>
+            );
+        }
+    };
+
+    const addressCompany = () => {
+        if (sirenData.local) {
+            const {
+                numerovoieetablissement,
+                indicerepetitionetablissement,
+                typevoieetablissement,
+                libellevoieetablissement,
+                distributionspecialeetablissement,
+                complementadresseetablissement,
+                codepostaletablissement,
+                libellecommuneetablissement,
+                libellecedexetablissement,
+                libellecommuneetrangeretablissement,
+                libellepaysetrangeretablissement,
+                codepaysetrangeretablissement,
+            } = sirenData.response;
+
+            return (
+                <>
+                    {numerovoieetablissement && (
+                        <ListValidationField
+                            label="Numéro"
+                            value={`${numerovoieetablissement}${
+                                indicerepetitionetablissement
+                                    ? ` ${indicerepetitionetablissement}`
+                                    : ''
+                            }`}
+                        />
+                    )}
+                    {libellevoieetablissement && (
+                        <ListValidationField
+                            label="Adresse"
+                            value={`${typevoieetablissement} ${libellevoieetablissement}`}
+                        />
+                    )}
+                    {distributionspecialeetablissement && (
+                        <ListValidationField
+                            label="Distribution spéciale"
+                            value={`${distributionspecialeetablissement}`}
+                        />
+                    )}
+                    {complementadresseetablissement && (
+                        <ListValidationField
+                            label="Complément d'adresse"
+                            value={`${complementadresseetablissement}`}
+                        />
+                    )}
+                    {codepostaletablissement && (
+                        <ListValidationField
+                            label="Adresse"
+                            value={`${codepostaletablissement} ${libellecommuneetablissement}`}
+                        />
+                    )}
+                    {libellecedexetablissement && (
+                        <ListValidationField label="Cedex" value={`${libellecedexetablissement}`} />
+                    )}
+                    {libellecommuneetrangeretablissement && (
+                        <ListValidationField
+                            label="Libelle commune étrangère"
+                            value={`${libellecommuneetrangeretablissement}`}
+                        />
+                    )}
+                    {libellepaysetrangeretablissement && (
+                        <ListValidationField
+                            label="Libelle pays etranger"
+                            value={`${libellepaysetrangeretablissement}`}
+                        />
+                    )}
+                    {codepaysetrangeretablissement && (
+                        <ListValidationField
+                            label="Code pays étranger"
+                            value={`${codepaysetrangeretablissement}`}
+                        />
+                    )}
+                </>
+            );
+        } else {
+            return null;
+        }
+    };
     const dataToDisplay = () => {
         switch (sirenData.siren) {
             case 'notfound':
@@ -174,57 +337,17 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     </Typography>
                 );
             default:
-                return sirenData.periodesUniteLegale[0].etatAdministratifUniteLegale === 'C'
+                if (sirenData.local) {
+                    return sirenData.response.etatAdministratifUniteLegale === 'C'
+                        ? renderClosedCompanyInfo()
+                        : renderOpenCompanyInfo();
+                }
+                return sirenData.response.periodesUniteLegale[0].etatAdministratifUniteLegale ===
+                    'C'
                     ? renderClosedCompanyInfo()
                     : renderOpenCompanyInfo();
         }
     };
-
-    const renderClosedCompanyInfo = () => (
-        <Typography variant="overline" color="error">
-            Entreprise administrativement fermée <br />
-        </Typography>
-    );
-
-    const renderOpenCompanyInfo = () => {
-        if (sirenData.periodesUniteLegale[0].denominationUniteLegale !== null) {
-            return renderLegalPersonInfo();
-        }
-        return renderPhysicalPersonInfo();
-    };
-
-    const renderLegalPersonInfo = () => (
-        <>
-            <Typography variant="overline" sx={{ color: 'green' }}>
-                Personne morale trouvée
-            </Typography>
-            <ListValidationField label="Siren" value={`${sirenData.siren}`} />
-            <ListValidationField
-                label="Raison sociale"
-                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
-            />
-            {usualDenomination()}
-            <ListValidationField
-                label="Sigle"
-                value={`${sirenData.periodesUniteLegale[0].denominationUniteLegale}`}
-            />
-        </>
-    );
-
-    const renderPhysicalPersonInfo = () => (
-        <>
-            <Typography variant="overline" sx={{ color: 'green' }}>
-                Personne physique trouvée
-            </Typography>
-            <ListValidationField label="Siren" value={`${sirenData.siren}`} />
-            {usualDenomination()}
-            <ListValidationField
-                label="Nom"
-                value={`${sirenData.periodesUniteLegale[0].nomUniteLegale}`}
-            />
-            <ListValidationField label="Prénom" value={`${sirenData.prenomUsuelUniteLegale}`} />
-        </>
-    );
 
     const handleSearch = (event) => {
         event.preventDefault();
@@ -239,6 +362,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 open={open}
                 onClose={onClose}
                 dataFromDatabase={<UserInformationFromDatabase selectedOwner={selectedOwner} />}
+                local={sirenData.local}
                 loading={loading}
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}

@@ -17,7 +17,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 
-
 function EventValidationForm({ open, selectedEvent, onClose }) {
     const { user } = useAuth();
     const ApiToken = user.token;
@@ -50,7 +49,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         }
     }
 
-
     function EventInformationFromDatabase({ selectedEvent }) {
         const {
             establishment_trade_name,
@@ -62,7 +60,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
             capacity,
             poster,
         } = selectedEvent;
-
 
         return (
             <>
@@ -160,7 +157,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         if (open) {
             getValidationStatus();
             getEventWithHistory();
-
         }
     }, [open]);
 
@@ -179,7 +175,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
         }
     }
 
-
     async function getEventWithHistory() {
         try {
             const response = await Axios.api.get(`/admin/event/${selectedEvent.id}/history`, {
@@ -194,7 +189,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
             console.log(error);
         }
     }
-
 
     async function handleValidate(validationStatus) {
         const status = parseInt(validationStatus);
@@ -228,7 +222,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                         <EventInformationFromDatabase selectedEvent={selectedEvent} />
                     )}
                     {eventHistoryFromApi()}
-
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose}>Annuler</Button>
@@ -241,7 +234,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                                 handleValidate(eventStatusFromApi[1].status_id);
                                 validationMail(1);
                             }}
-
                         >
                             Refusé
                         </Button>
@@ -251,7 +243,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                                 handleValidate(eventStatusFromApi[0].status_id);
                                 validationMail(0);
                             }}
-
                         >
                             Valider
                         </Button>
