@@ -7,7 +7,7 @@ import Dialog from '@mui/material/Dialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import DoneIcon from '@mui/icons-material/Done';
-import { rowCommonDeletedAt, getStatusBackgroundColor } from '../Datagrid/datagridUtils';
+import { getStatusBackgroundColor } from '../Datagrid/datagridUtils';
 import HeaderDatagrid from '../HeaderDatagrid';
 import ModalDeleteRestore from '../ModalDeleteRestore';
 import EventValidationForm from './EventValidationForm';
@@ -80,6 +80,7 @@ function EventDatagrid() {
         establishment_trade_name: event.trade_name,
         status: JSON.parse(event.comment),
         deleted_at: event.deleted_at,
+        userId: event.user_id,
     }));
 
     const eventColumns = [
@@ -198,7 +199,6 @@ function EventDatagrid() {
                 );
             },
         },
-        rowCommonDeletedAt,
         {
             field: 'action',
             headerName: 'Action',
