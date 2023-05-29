@@ -31,6 +31,23 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     const [siretData, setSiretData] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
 
+    async function validationMail(validationCode) {
+        try {
+            await Axios.api.get(
+                `pro/mail/valide/establishment/${selectedEstablishment.id}/${validationCode}`,
+                {
+                    headers: {
+                        accept: 'application/vnd.api+json',
+                        'Content-Type': 'application/vnd.api+json',
+                        Authorization: `Bearer ${ApiToken}`,
+                    },
+                },
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async function getDataFromSiretApi() {
         try {
             const response = await Axios.api.get(`/check-siret/${selectedEstablishment.siret}`, {
@@ -110,7 +127,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
         }
     }
     function usualDenomination() {
-        const { periodesEtablissement } = siretData;
+        const { periodesEtablissement } = siretData.response;
         const {
             denominationUsuelleEtablissement,
             enseigne1Etablissement,
@@ -153,7 +170,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     }
 
     function establishmentAddress() {
-        const { adresseEtablissement } = siretData;
+        const { adresseEtablissement } = siretData.response;
         return (
             <>
                 <ListValidationField
@@ -194,8 +211,9 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 );
             default:
                 if (
-                    siretData.periodesEtablissement[0].etatAdministratifEtablissement === 'F' ||
-                    siretData.uniteLegale.etatAdministratifUniteLegale === 'C'
+                    siretData.response.periodesEtablissement[0].etatAdministratifEtablissement ===
+                        'F' ||
+                    siretData.response.uniteLegale.etatAdministratifUniteLegale === 'C'
                 ) {
                     return (
                         <Typography variant="overline" color="error">
@@ -204,13 +222,13 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                     );
                 }
 
-                if (siretData.etablissementSiege === true) {
+                if (siretData.response.etablissementSiege === true) {
                     return (
                         <>
                             <ListValidationField label="Siret" value={`${siretData.siret}`} />
                             <ListValidationField
                                 label="Raison sociale"
-                                value={`${siretData.uniteLegale.denominationUniteLegale}`}
+                                value={`${siretData.response.uniteLegale.denominationUniteLegale}`}
                             />
                             {establishmentAddress()}
                         </>
@@ -218,7 +236,10 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 } else {
                     return (
                         <>
-                            <ListValidationField label="Siret" value={`${siretData.siret}`} />
+                            <ListValidationField
+                                label="Siret"
+                                value={`${siretData.response.siret}`}
+                            />
                             {usualDenomination()}
                             {establishmentAddress()}
                         </>
@@ -253,8 +274,14 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 loading={loading}
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}
-                onClickReject={() => handleValidate(statusFromApi[1].status_id)}
-                onClickValidate={() => handleValidate(statusFromApi[0].status_id)}
+                onClickReject={() => {
+                    handleValidate(statusFromApi[1].status_id);
+                    validationMail(1);
+                }}
+                onClickValidate={() => {
+                    handleValidate(statusFromApi[0].status_id);
+                    validationMail(0);
+                }}
                 disableButton={
                     siretData.siret === 'notfound' ||
                     siretData.siret === 'tooManyRequests' ||
