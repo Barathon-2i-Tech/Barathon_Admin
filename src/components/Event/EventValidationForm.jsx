@@ -230,7 +230,6 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
                         <Button
                             color="error"
                             onClick={() => {
-                                console.log(selectedEvent);
                                 handleValidate(eventStatusFromApi[1].status_id);
                                 validationMail(1);
                             }}

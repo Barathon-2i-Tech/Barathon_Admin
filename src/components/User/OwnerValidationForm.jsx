@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import Axios from '../../utils/axiosUrl';
-import { useAuth } from '../../hooks/useAuth';
 import Typography from '@mui/material/Typography';
-import ListValidationField from '../Form/ListValidationField';
-import { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import { useAuth } from '../../hooks/useAuth';
+import Axios from '../../utils/axiosUrl';
+import ListValidationField from '../Form/ListValidationField';
 import ValidationForm from '../Form/ValidationForm';
 import { errorStatusToast, errorToast, validationToast } from '../ToastsUtils';
 
@@ -39,6 +39,20 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
         }
     }, [open]);
 
+    async function validationMail(validationCode) {
+        try {
+            await Axios.api.get(`pro/mail/valide/${selectedOwner.id}/${validationCode}`, {
+                headers: {
+                    accept: 'application/vnd.api+json',
+                    'Content-Type': 'application/vnd.api+json',
+                    Authorization: `Bearer ${ApiToken}`,
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async function getDataFromSirenApi() {
         try {
             const response = await Axios.api.get(`/check-siren/${selectedOwner.siren}`, {
@@ -48,7 +62,6 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     Authorization: `Bearer ${ApiToken}`,
                 },
             });
-            console.log(response);
             setSirenData(response.data.data);
             setLoading(false);
         } catch (error) {
@@ -366,8 +379,14 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                 loading={loading}
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}
-                onClickReject={() => handleValidate(statusFromApi[1].status_id)}
-                onClickValidate={() => handleValidate(statusFromApi[0].status_id)}
+                onClickReject={() => {
+                    handleValidate(statusFromApi[1].status_id);
+                    validationMail(1);
+                }}
+                onClickValidate={() => {
+                    handleValidate(statusFromApi[0].status_id);
+                    validationMail(0);
+                }}
                 disableButton={
                     sirenData.siren === 'notfound' ||
                     sirenData.siren === 'tooManyRequests' ||
