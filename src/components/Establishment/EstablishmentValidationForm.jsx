@@ -31,6 +31,23 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     const [siretData, setSiretData] = useState({});
     const [statusFromApi, setStatusFromApi] = useState({});
 
+    async function validationMail(validationCode) {
+        try {
+            await Axios.api.get(
+                `pro/mail/valide/establishment/${selectedEstablishment.id}/${validationCode}`,
+                {
+                    headers: {
+                        accept: 'application/vnd.api+json',
+                        'Content-Type': 'application/vnd.api+json',
+                        Authorization: `Bearer ${ApiToken}`,
+                    },
+                },
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async function getDataFromSiretApi() {
         try {
             const response = await Axios.api.get(`/check-siret/${selectedEstablishment.siret}`, {
@@ -109,70 +126,183 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
             onClose();
         }
     }
+
     function usualDenomination() {
-        const { periodesEtablissement } = siretData;
-        const {
-            denominationUsuelleEtablissement,
-            enseigne1Etablissement,
-            enseigne2Etablissement,
-            enseigne3Etablissement,
-        } = periodesEtablissement[0];
+        if (siretData.local) {
+            const {
+                denominationUsuelleEtablissement,
+                enseigne1Etablissement,
+                enseigne2Etablissement,
+                enseigne3Etablissement,
+            } = siretData.response;
 
-        if (!enseigne1Etablissement && !denominationUsuelleEtablissement) {
-            return null;
+            if (!enseigne1Etablissement && !denominationUsuelleEtablissement) {
+                return null;
+            }
+
+            return (
+                <>
+                    {denominationUsuelleEtablissement && (
+                        <ListValidationField
+                            label="Raison sociale"
+                            value={`${denominationUsuelleEtablissement}`}
+                        />
+                    )}
+                    {enseigne1Etablissement && (
+                        <ListValidationField
+                            label="Raison sociale"
+                            value={`${enseigne1Etablissement}`}
+                        />
+                    )}
+                    {enseigne2Etablissement && (
+                        <ListValidationField
+                            label="Raison sociale (2eme ligne)"
+                            value={`${enseigne2Etablissement}`}
+                        />
+                    )}
+                    {enseigne3Etablissement && (
+                        <ListValidationField
+                            label="Raison sociale (3eme ligne)"
+                            value={`${enseigne3Etablissement}`}
+                        />
+                    )}
+                </>
+            );
+        } else {
+            const { denominationUsuelleEtablissement, enseigne1Etablissement } =
+                siretData.response.periodesEtablissement[0];
+
+            if (!enseigne1Etablissement && !denominationUsuelleEtablissement) {
+                return null;
+            }
+
+            return (
+                <>
+                    {denominationUsuelleEtablissement && (
+                        <ListValidationField
+                            label="Raison sociale"
+                            value={`${denominationUsuelleEtablissement}`}
+                        />
+                    )}
+                    {enseigne1Etablissement && (
+                        <ListValidationField
+                            label="Raison sociale"
+                            value={`${enseigne1Etablissement}`}
+                        />
+                    )}
+                </>
+            );
         }
-
-        return (
-            <>
-                {denominationUsuelleEtablissement && (
-                    <ListValidationField
-                        label="Raison sociale"
-                        value={`${denominationUsuelleEtablissement}`}
-                    />
-                )}
-                {enseigne1Etablissement && (
-                    <ListValidationField
-                        label="Raison sociale"
-                        value={`${enseigne1Etablissement}`}
-                    />
-                )}
-                {enseigne2Etablissement && (
-                    <ListValidationField
-                        label="Raison sociale (2eme ligne)"
-                        value={`${enseigne2Etablissement}`}
-                    />
-                )}
-                {enseigne3Etablissement && (
-                    <ListValidationField
-                        label="Raison sociale (3eme ligne)"
-                        value={`${enseigne3Etablissement}`}
-                    />
-                )}
-            </>
-        );
     }
 
     function establishmentAddress() {
-        const { adresseEtablissement } = siretData;
+        const numerovoieetablissement = siretData.local
+            ? siretData.response.numeroVoieEtablissement
+            : siretData.response.adresseEtablissement.numeroVoieEtablissement;
+        const indicerepetitionetablissement = siretData.local
+            ? siretData.response.indiceRepetitionEtablissement
+            : siretData.response.adresseEtablissement.indiceRepetitionEtablissement;
+        const typevoieetablissement = siretData.local
+            ? siretData.response.typeVoieEtablissement
+            : siretData.response.adresseEtablissement.typeVoieEtablissement;
+        const libellevoieetablissement = siretData.local
+            ? siretData.response.libelleVoieEtablissement
+            : siretData.response.adresseEtablissement.libelleVoieEtablissement;
+        const distributionspecialeetablissement = siretData.local
+            ? siretData.response.distributionSpecialeEtablissement
+            : siretData.response.adresseEtablissement.distributionSpecialeEtablissement;
+        const complementadresseetablissement = siretData.local
+            ? siretData.response.complementAdresseEtablissement
+            : siretData.response.adresseEtablissement.complementAdresseEtablissement;
+        const codepostaletablissement = siretData.local
+            ? siretData.response.codePostalEtablissement
+            : siretData.response.adresseEtablissement.codePostalEtablissement;
+        const libellecommuneetablissement = siretData.local
+            ? siretData.response.libelleCommuneEtablissement
+            : siretData.response.adresseEtablissement.libelleCommuneEtablissement;
+        const libellecedexetablissement = siretData.local
+            ? siretData.response.libelleCedexEtablissement
+            : siretData.response.adresseEtablissement.libelleCedexEtablissement;
+        const libellecommuneetrangeretablissement = siretData.local
+            ? siretData.response.libelleCommuneEtrangerEtablissement
+            : siretData.response.adresseEtablissement.libelleCommuneEtrangerEtablissement;
+        const libellepaysetrangeretablissement = siretData.local
+            ? siretData.response.libellePaysEtrangerEtablissement
+            : siretData.response.adresseEtablissement.libellePaysEtrangerEtablissement;
+        const codepaysetrangeretablissement = siretData.local
+            ? siretData.response.codePaysEtrangerEtablissement
+            : siretData.response.adresseEtablissement.codePaysEtrangerEtablissement;
+
         return (
             <>
-                <ListValidationField
-                    label="Adresse"
-                    value={`${adresseEtablissement.numeroVoieEtablissement} ${adresseEtablissement.typeVoieEtablissement} ${adresseEtablissement.libelleVoieEtablissement}`}
-                />
-                <ListValidationField
-                    label="Code postal"
-                    value={`${adresseEtablissement.codePostalEtablissement}`}
-                />
-                <ListValidationField
-                    label="Ville"
-                    value={`${adresseEtablissement.libelleCommuneEtablissement}`}
-                />
+                {numerovoieetablissement && (
+                    <ListValidationField
+                        label="Numéro"
+                        value={`${numerovoieetablissement}${
+                            indicerepetitionetablissement ? ` ${indicerepetitionetablissement}` : ''
+                        }`}
+                    />
+                )}
+                {libellevoieetablissement && (
+                    <ListValidationField
+                        label="Voie"
+                        value={`${typevoieetablissement} ${libellevoieetablissement}`}
+                    />
+                )}
+                {distributionspecialeetablissement && (
+                    <ListValidationField
+                        label="Distribution spéciale"
+                        value={`${distributionspecialeetablissement}`}
+                    />
+                )}
+                {complementadresseetablissement && (
+                    <ListValidationField
+                        label="Complément d'adresse"
+                        value={`${complementadresseetablissement}`}
+                    />
+                )}
+                {codepostaletablissement && (
+                    <ListValidationField
+                        label="Adresse"
+                        value={`${codepostaletablissement} ${libellecommuneetablissement}`}
+                    />
+                )}
+                {libellecedexetablissement && (
+                    <ListValidationField label="Cedex" value={`${libellecedexetablissement}`} />
+                )}
+                {libellecommuneetrangeretablissement && (
+                    <ListValidationField
+                        label="Libelle commune étrangère"
+                        value={`${libellecommuneetrangeretablissement}`}
+                    />
+                )}
+                {libellepaysetrangeretablissement && (
+                    <ListValidationField
+                        label="Libelle pays etranger"
+                        value={`${libellepaysetrangeretablissement}`}
+                    />
+                )}
+                {codepaysetrangeretablissement && (
+                    <ListValidationField
+                        label="Code pays étranger"
+                        value={`${codepaysetrangeretablissement}`}
+                    />
+                )}
             </>
         );
     }
 
     function dataToDisplay() {
+        const responseData = siretData.local
+            ? siretData.response
+            : siretData.response.periodesEtablissement[0];
+        const etatAdministratifEtablissement = responseData;
+        const etablissementSiege = siretData.response.etablissementSiege;
+        const denominationUniteLegale = siretData.local
+            ? siretData.response.denominationUniteLegale
+            : siretData.response.uniteLegale.denominationUniteLegale;
+        const siret = siretData.response.siret;
+
         switch (siretData.siret) {
             case 'notfound':
                 return (
@@ -193,10 +323,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                     </Typography>
                 );
             default:
-                if (
-                    siretData.periodesEtablissement[0].etatAdministratifEtablissement === 'F' ||
-                    siretData.uniteLegale.etatAdministratifUniteLegale === 'C'
-                ) {
+                if (etatAdministratifEtablissement === 'F') {
                     return (
                         <Typography variant="overline" color="error">
                             Etablissement administrativement fermé
@@ -204,13 +331,13 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                     );
                 }
 
-                if (siretData.etablissementSiege === true) {
+                if (etablissementSiege === true) {
                     return (
                         <>
-                            <ListValidationField label="Siret" value={`${siretData.siret}`} />
+                            <ListValidationField label="Siret" value={`${siret}`} />
                             <ListValidationField
                                 label="Raison sociale"
-                                value={`${siretData.uniteLegale.denominationUniteLegale}`}
+                                value={`${denominationUniteLegale}`}
                             />
                             {establishmentAddress()}
                         </>
@@ -218,7 +345,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 } else {
                     return (
                         <>
-                            <ListValidationField label="Siret" value={`${siretData.siret}`} />
+                            <ListValidationField label="Siret" value={`${siret}`} />
                             {usualDenomination()}
                             {establishmentAddress()}
                         </>
@@ -245,6 +372,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
             <ValidationForm
                 open={open}
                 onClose={onClose}
+                local={siretData.local}
                 dataFromDatabase={
                     <EstablishmentInformationFromDatabase
                         selectedEstablishment={selectedEstablishment}
@@ -253,8 +381,14 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
                 loading={loading}
                 dataToDisplay={dataToDisplay}
                 handleSearch={handleSearch}
-                onClickReject={() => handleValidate(statusFromApi[1].status_id)}
-                onClickValidate={() => handleValidate(statusFromApi[0].status_id)}
+                onClickReject={() => {
+                    handleValidate(statusFromApi[1].status_id);
+                    validationMail(1);
+                }}
+                onClickValidate={() => {
+                    handleValidate(statusFromApi[0].status_id);
+                    validationMail(0);
+                }}
                 disableButton={
                     siretData.siret === 'notfound' ||
                     siretData.siret === 'tooManyRequests' ||
