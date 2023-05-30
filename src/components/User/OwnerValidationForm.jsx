@@ -251,20 +251,22 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
 
     const addressCompany = () => {
         if (sirenData.local) {
-            const {
-                numerovoieetablissement,
-                indicerepetitionetablissement,
-                typevoieetablissement,
-                libellevoieetablissement,
-                distributionspecialeetablissement,
-                complementadresseetablissement,
-                codepostaletablissement,
-                libellecommuneetablissement,
-                libellecedexetablissement,
-                libellecommuneetrangeretablissement,
-                libellepaysetrangeretablissement,
-                codepaysetrangeretablissement,
-            } = sirenData.response;
+            const numerovoieetablissement = sirenData.response.numeroVoieEtablissement;
+            const indicerepetitionetablissement = sirenData.response.indiceRepetitionEtablissement;
+            const typevoieetablissement = sirenData.response.typeVoieEtablissement;
+            const libellevoieetablissement = sirenData.response.libelleVoieEtablissement;
+            const distributionspecialeetablissement =
+                sirenData.response.distributionSpecialeEtablissement;
+            const complementadresseetablissement =
+                sirenData.response.complementAdresseEtablissement;
+            const codepostaletablissement = sirenData.response.codePostalEtablissement;
+            const libellecommuneetablissement = sirenData.response.libelleCommuneEtablissement;
+            const libellecedexetablissement = sirenData.response.libelleCedexEtablissement;
+            const libellecommuneetrangeretablissement =
+                sirenData.response.libelleCommuneEtrangerEtablissement;
+            const libellepaysetrangeretablissement =
+                sirenData.response.libellePaysEtrangerEtablissement;
+            const codepaysetrangeretablissement = sirenData.response.codePaysEtrangerEtablissement;
 
             return (
                 <>
@@ -280,7 +282,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     )}
                     {libellevoieetablissement && (
                         <ListValidationField
-                            label="Adresse"
+                            label="voie"
                             value={`${typevoieetablissement} ${libellevoieetablissement}`}
                         />
                     )}
@@ -298,7 +300,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     )}
                     {codepostaletablissement && (
                         <ListValidationField
-                            label="Adresse"
+                            label="Code postal"
                             value={`${codepostaletablissement} ${libellecommuneetablissement}`}
                         />
                     )}
@@ -313,7 +315,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
                     )}
                     {libellepaysetrangeretablissement && (
                         <ListValidationField
-                            label="Libelle pays etranger"
+                            label="Libelle pays étranger"
                             value={`${libellepaysetrangeretablissement}`}
                         />
                     )}
