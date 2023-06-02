@@ -88,7 +88,7 @@ function OwnerValidationForm({ open, selectedOwner, onClose }) {
 
     async function handleValidate(validationStatus) {
         try {
-            await Axios.api.put(
+            await Axios.api.patch(
                 `/pro/${selectedOwner.owner_id}/validation/${validationStatus}`,
                 null,
                 {
