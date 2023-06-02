@@ -104,7 +104,7 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
 
     async function handleValidate(validationStatus) {
         try {
-            await Axios.api.put(
+            await Axios.api.patch(
                 `/establishment/${selectedEstablishment.id}/validation/${validationStatus}`,
                 null,
                 {

@@ -44,13 +44,13 @@ export const mainListItems = (
             <ListItemText primary="Tags" />
         </ListItemButton>
         <Divider sx={{ my: 1 }} />
-        <ListItemButton href="/admin/messagerie">
+        <ListItemButton href="/admin/messagerie" disabled>
             <ListItemIcon>
                 <EmailIcon />
             </ListItemIcon>
             <ListItemText primary="Messagerie" />
         </ListItemButton>
-        <ListItemButton href="/admin/profile">
+        <ListItemButton href="/admin/profile" disabled>
             <ListItemIcon>
                 <PermContactCalendarIcon />
             </ListItemIcon>
