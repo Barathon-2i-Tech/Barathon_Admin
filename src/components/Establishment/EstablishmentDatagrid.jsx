@@ -19,7 +19,6 @@ function EstablishmentDatagrid() {
     const [allEstablishments, setAllEstablishments] = useState([]);
     const [selectedEstablishment, setSelectedEstablishment] = useState(null);
     const [selectedEstablishmentId, setSelectedEstablishmentId] = useState(null);
-    const [selectedOwnerId, setSelectedOwnerId] = useState(null);
     const [openEstablishment, setOpenEstablishment] = useState(false);
     const [openEstablishmentFormValidation, setOpenEstablishmentFormValidation] = useState(false);
 
@@ -47,9 +46,8 @@ function EstablishmentDatagrid() {
         setSelectedEstablishment(data);
         setOpenEstablishmentFormValidation(true);
     };
-    const handleClickOpenEstablishment = (id, owner_id) => {
+    const handleClickOpenEstablishment = (id) => {
         setSelectedEstablishmentId(id);
-        setSelectedOwnerId(owner_id);
         setOpenEstablishment(true);
     };
 
@@ -233,8 +231,8 @@ function EstablishmentDatagrid() {
                             : 'restaurer'
                     } cet établissement ?`}
                     onClose={handleClose}
-                    deleteUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}`}
-                    restoreUrl={`/pro/${selectedOwnerId}/establishment/${selectedEstablishmentId}/restore`}
+                    deleteUrl={`/pro/establishment/${selectedEstablishmentId}`}
+                    restoreUrl={`/pro/establishment/${selectedEstablishmentId}/restore`}
                     action={
                         selectedEstablishmentId !== null &&
                         allEstablishments.find(
