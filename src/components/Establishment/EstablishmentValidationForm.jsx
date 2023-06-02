@@ -293,6 +293,30 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
     }
 
     function dataToDisplay() {
+        if (siretData.siret === 'notfound') {
+            return (
+                <Typography variant="overline" color="error">
+                    Etablissement non trouvé
+                </Typography>
+            );
+        }
+
+        if (siretData.siret === 'tooManyRequests') {
+            return (
+                <Typography variant="overline" color="error">
+                    Trop de requêtes. Merci de patienter et de réessayer
+                </Typography>
+            );
+        }
+
+        if (siretData.siret === 'error') {
+            return (
+                <Typography variant="overline" color="error">
+                    Une erreur est survenue
+                </Typography>
+            );
+        }
+
         const responseData = siretData.local
             ? siretData.response
             : siretData.response.periodesEtablissement[0];
@@ -303,54 +327,33 @@ function EstablishmentValidationForm({ open, selectedEstablishment, onClose }) {
             : siretData.response.uniteLegale.denominationUniteLegale;
         const siret = siretData.response.siret;
 
-        switch (siretData.siret) {
-            case 'notfound':
-                return (
-                    <Typography variant="overline" color="error">
-                        Etablissement non trouvé
-                    </Typography>
-                );
-            case 'tooManyRequests':
-                return (
-                    <Typography variant="overline" color="error">
-                        Trop de requêtes. Merci de patienter et de réessayer
-                    </Typography>
-                );
-            case 'error':
-                return (
-                    <Typography variant="overline" color="error">
-                        Une erreur est survenue
-                    </Typography>
-                );
-            default:
-                if (etatAdministratifEtablissement === 'F') {
-                    return (
-                        <Typography variant="overline" color="error">
-                            Etablissement administrativement fermé
-                        </Typography>
-                    );
-                }
+        if (etatAdministratifEtablissement === 'F') {
+            return (
+                <Typography variant="overline" color="error">
+                    Etablissement administrativement fermé
+                </Typography>
+            );
+        }
 
-                if (etablissementSiege === true) {
-                    return (
-                        <>
-                            <ListValidationField label="Siret" value={`${siret}`} />
-                            <ListValidationField
-                                label="Raison sociale"
-                                value={`${denominationUniteLegale}`}
-                            />
-                            {establishmentAddress()}
-                        </>
-                    );
-                } else {
-                    return (
-                        <>
-                            <ListValidationField label="Siret" value={`${siret}`} />
-                            {usualDenomination()}
-                            {establishmentAddress()}
-                        </>
-                    );
-                }
+        if (etablissementSiege === true) {
+            return (
+                <>
+                    <ListValidationField label="Siret" value={`${siret}`} />
+                    <ListValidationField
+                        label="Raison sociale"
+                        value={`${denominationUniteLegale}`}
+                    />
+                    {establishmentAddress()}
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <ListValidationField label="Siret" value={`${siret}`} />
+                    {usualDenomination()}
+                    {establishmentAddress()}
+                </>
+            );
         }
     }
 
