@@ -193,7 +193,7 @@ function EventValidationForm({ open, selectedEvent, onClose }) {
     async function handleValidate(validationStatus) {
         const status = parseInt(validationStatus);
         try {
-            await Axios.api.put(`/event/${selectedEvent.id}/validation/${status}`, null, {
+            await Axios.api.patch(`/event/${selectedEvent.id}/validation/${status}`, null, {
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${ApiToken}`,
