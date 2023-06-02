@@ -182,7 +182,7 @@ function EstablishmentDatagrid() {
                         color={params.row.deleted_at === null ? 'error' : 'warning'}
                         size="small"
                         onClick={() => {
-                            handleClickOpenEstablishment(params.row.id, params.row.owner_id);
+                            handleClickOpenEstablishment(params.row.id);
                         }}
                         startIcon={
                             params.row.deleted_at === null ? (
